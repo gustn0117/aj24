@@ -73,7 +73,7 @@ export default function CheckoutPage() {
       <div className="max-w-[900px] mx-auto px-4 sm:px-6 py-10 md:py-16">
         <h1 className="text-2xl font-black tracking-tight mb-8">주문하기</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6">
           {/* Shipping form */}
           <div className="md:col-span-3 bg-white rounded-xl p-6 border border-gray-100">
             <h2 className="text-base font-bold mb-5">배송 정보</h2>
@@ -100,7 +100,7 @@ export default function CheckoutPage() {
 
           {/* Order summary */}
           <div className="md:col-span-2">
-            <div className="bg-white rounded-xl p-6 border border-gray-100 sticky top-24">
+            <div className="bg-white rounded-xl p-5 sm:p-6 border border-gray-100 md:sticky md:top-24">
               <h2 className="text-base font-bold mb-5">주문 요약</h2>
               <div className="space-y-3 mb-5">
                 {items.map((item) => (

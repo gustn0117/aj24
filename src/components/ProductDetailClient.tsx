@@ -67,7 +67,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
             )}
 
             {/* Price */}
-            <div className="border-t border-b border-gray-100 py-6 mb-6">
+            <div className="border-t border-b border-gray-100 py-4 sm:py-6 mb-6">
               <div className="flex items-baseline gap-3">
                 {discountPercent > 0 && (
                   <span className="text-2xl font-black text-red-500">{discountPercent}%</span>
@@ -88,9 +88,9 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
             <div className="flex items-center gap-4 mb-6">
               <span className="text-sm font-semibold text-gray-700">수량</span>
               <div className="flex items-center border border-gray-200 rounded-lg">
-                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-black transition-colors">−</button>
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-11 h-11 flex items-center justify-center text-gray-500 hover:text-black transition-colors">−</button>
                 <span className="w-10 text-center text-sm font-bold">{quantity}</span>
-                <button onClick={() => setQuantity(quantity + 1)} className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-black transition-colors">+</button>
+                <button onClick={() => setQuantity(quantity + 1)} className="w-11 h-11 flex items-center justify-center text-gray-500 hover:text-black transition-colors">+</button>
               </div>
               <span className="text-sm text-gray-400 ml-auto">{formatPrice(product.sale_price * quantity)}</span>
             </div>

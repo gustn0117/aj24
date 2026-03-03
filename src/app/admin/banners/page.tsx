@@ -23,7 +23,7 @@ function BannerImageUploader({ value, onChange }: { value: string; onChange: (ur
     <div>
       <div
         onClick={() => inputRef.current?.click()}
-        className={`border-2 border-dashed rounded-lg cursor-pointer transition-all overflow-hidden ${value ? "aspect-[21/9] max-w-[400px]" : "py-6"} border-gray-200 hover:border-gray-400`}
+        className={`border-2 border-dashed rounded-lg cursor-pointer transition-all overflow-hidden ${value ? "aspect-[21/9] max-w-full sm:max-w-[400px]" : "py-6"} border-gray-200 hover:border-gray-400`}
       >
         {uploading ? (
           <div className="flex items-center justify-center h-full py-4">
@@ -131,7 +131,7 @@ export default function BannersPage() {
             </div>
           </div>
           <div><label className={labelCls}>배너 이미지</label><BannerImageUploader value={form.image_url} onChange={(url) => setForm({ ...form, image_url: url })} /></div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div><label className={labelCls}>링크 URL</label><input value={form.link_url} onChange={(e) => setForm({ ...form, link_url: e.target.value })} className={inputCls} /></div>
             <div><label className={labelCls}>정렬 순서</label><input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })} className={inputCls} /></div>
           </div>

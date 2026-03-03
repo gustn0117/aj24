@@ -49,15 +49,15 @@ export default function MyPage() {
 
         {/* Quick links */}
         <div className="grid grid-cols-3 gap-3 mb-8">
-          <a href="/mypage/orders" className="bg-white rounded-xl p-5 border border-gray-100 text-center hover:border-gray-300 transition-colors">
+          <a href="/mypage/orders" className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 text-center hover:border-gray-300 transition-colors">
             <p className="text-2xl font-black text-black">{orders.length}</p>
             <p className="text-xs text-gray-400 mt-1">주문 내역</p>
           </a>
-          <a href="/mypage/wishlist" className="bg-white rounded-xl p-5 border border-gray-100 text-center hover:border-gray-300 transition-colors">
+          <a href="/mypage/wishlist" className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 text-center hover:border-gray-300 transition-colors">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
             <p className="text-xs text-gray-400 mt-1">위시리스트</p>
           </a>
-          <a href="/mypage/profile" className="bg-white rounded-xl p-5 border border-gray-100 text-center hover:border-gray-300 transition-colors">
+          <a href="/mypage/profile" className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 text-center hover:border-gray-300 transition-colors">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
             <p className="text-xs text-gray-400 mt-1">내 정보</p>
           </a>
@@ -65,7 +65,7 @@ export default function MyPage() {
 
         {/* Recent orders */}
         <div className="bg-white rounded-xl border border-gray-100">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <div className="px-4 sm:px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <h2 className="font-bold text-sm">최근 주문</h2>
             <a href="/mypage/orders" className="text-xs text-gray-400 hover:text-black transition-colors">전체보기</a>
           </div>
@@ -74,7 +74,7 @@ export default function MyPage() {
           ) : (
             <div className="divide-y divide-gray-50">
               {orders.slice(0, 5).map((order) => (
-                <a key={order.id} href={`/mypage/orders/${order.id}`} className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors">
+                <a key={order.id} href={`/mypage/orders/${order.id}`} className="flex items-center justify-between px-4 sm:px-6 py-4 hover:bg-gray-50 transition-colors">
                   <div>
                     <p className="text-sm font-semibold text-black">주문 #{order.id}</p>
                     <p className="text-xs text-gray-400 mt-0.5">{new Date(order.created_at).toLocaleDateString("ko-KR")}</p>

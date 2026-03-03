@@ -70,8 +70,18 @@ export default function ProductCard({ product }: { product: Product }) {
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-600" />
 
-        {/* Quick actions on hover */}
-        <div className="absolute bottom-0 left-0 right-0 p-2.5 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-10">
+        {/* Mobile wishlist button (always visible on touch devices) */}
+        <button
+          onClick={handleToggleWishlist}
+          className={`absolute top-2 right-2 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-colors md:hidden ${wishlisted ? "bg-red-500 text-white" : "bg-white/80 text-gray-400 backdrop-blur-sm"} ${discountPercent > 0 ? "top-8" : ""}`}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill={wishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        </button>
+
+        {/* Quick actions on hover (desktop only) */}
+        <div className="absolute bottom-0 left-0 right-0 p-2.5 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-10 hidden md:block">
           <div className="flex items-center gap-1.5">
             <button
               onClick={handleAddToCart}

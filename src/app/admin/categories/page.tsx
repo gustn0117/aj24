@@ -40,7 +40,8 @@ export default function CategoriesPage() {
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200/80 overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[600px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
               <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">ID</th>
@@ -73,6 +74,7 @@ export default function CategoriesPage() {
             ))}
           </tbody>
         </table>
+        </div>
         {categories.length === 0 && <div className="text-center py-16"><p className="text-gray-400 text-sm">카테고리가 없습니다.</p></div>}
       </div>
 

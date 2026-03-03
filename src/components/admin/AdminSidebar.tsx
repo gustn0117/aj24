@@ -12,14 +12,19 @@ const menuItems = [
   { href: "/admin/members", label: "회원 관리", icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" },
 ];
 
-export default function AdminSidebar() {
+interface AdminSidebarProps {
+  mobileOpen: boolean;
+  onClose: () => void;
+}
+
+function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-[240px] bg-gray-950 min-h-screen flex flex-col shrink-0 border-r border-gray-800/50">
+    <>
       {/* Logo */}
       <div className="p-5 pb-4">
-        <Link href="/admin" className="flex items-center gap-2.5">
+        <Link href="/admin" className="flex items-center gap-2.5" onClick={onNavigate}>
           <img src="/images/logo.png" alt="AJ24" className="h-7 w-auto brightness-0 invert" />
           <div>
             <span className="text-white font-bold text-sm block leading-tight">AJ24</span>
@@ -41,6 +46,7 @@ export default function AdminSidebar() {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={onNavigate}
                 className={`flex items-center gap-3 px-3 py-2.5 text-[13px] rounded-lg transition-all duration-200 ${
                   isActive
                     ? "bg-white text-gray-900 font-semibold shadow-sm"
@@ -71,6 +77,32 @@ export default function AdminSidebar() {
           </Link>
         </div>
       </div>
-    </aside>
+    </>
+  );
+}
+
+export default function AdminSidebar({ mobileOpen, onClose }: AdminSidebarProps) {
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex w-[240px] bg-gray-950 min-h-screen flex-col shrink-0 border-r border-gray-800/50">
+        <SidebarContent />
+      </aside>
+
+      {/* Mobile sidebar overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+          <aside className="absolute top-0 left-0 w-[260px] h-full bg-gray-950 flex flex-col overflow-y-auto">
+            <div className="absolute top-4 right-4">
+              <button onClick={onClose} className="p-1.5 text-gray-500 hover:text-white transition-colors">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <SidebarContent onNavigate={onClose} />
+          </aside>
+        </div>
+      )}
+    </>
   );
 }

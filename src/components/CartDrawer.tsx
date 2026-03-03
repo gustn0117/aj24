@@ -18,7 +18,7 @@ export default function CartDrawer() {
   return (
     <div className="fixed inset-0 z-[60] animate-fade-in">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setCartOpen(false)} />
-      <div className="absolute top-0 right-0 w-full max-w-[400px] h-full bg-white shadow-2xl flex flex-col animate-slide-down">
+      <div className="absolute top-0 right-0 w-full sm:max-w-[400px] h-full bg-white shadow-2xl flex flex-col animate-slide-down">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <h2 className="text-base font-bold text-black">장바구니 ({getItemCount()})</h2>
@@ -54,9 +54,9 @@ export default function CartDrawer() {
                     <p className="text-[13px] font-medium text-gray-800 line-clamp-2 mb-1">{item.name}</p>
                     <p className="text-[13px] font-bold text-black">{formatPrice(item.sale_price)}</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <button onClick={() => updateQuantity(item.productId, item.quantity - 1)} className="w-7 h-7 border border-gray-200 rounded flex items-center justify-center text-gray-500 hover:border-gray-400 text-xs">−</button>
+                      <button onClick={() => updateQuantity(item.productId, item.quantity - 1)} className="w-8 h-8 border border-gray-200 rounded flex items-center justify-center text-gray-500 hover:border-gray-400 text-xs">−</button>
                       <span className="text-xs font-semibold w-5 text-center">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.productId, item.quantity + 1)} className="w-7 h-7 border border-gray-200 rounded flex items-center justify-center text-gray-500 hover:border-gray-400 text-xs">+</button>
+                      <button onClick={() => updateQuantity(item.productId, item.quantity + 1)} className="w-8 h-8 border border-gray-200 rounded flex items-center justify-center text-gray-500 hover:border-gray-400 text-xs">+</button>
                       <button onClick={() => removeItem(item.productId)} className="ml-auto text-gray-300 hover:text-red-500 transition-colors">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
                       </button>

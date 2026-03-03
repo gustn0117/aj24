@@ -129,7 +129,7 @@ export default function Header({ categories }: HeaderProps) {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   placeholder="상품을 검색해보세요..."
-                  className="flex-1 text-xl font-medium outline-none placeholder:text-gray-300 text-black"
+                  className="flex-1 text-base sm:text-xl font-medium outline-none placeholder:text-gray-300 text-black"
                 />
                 <button onClick={() => setSearchOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
@@ -167,7 +167,13 @@ export default function Header({ categories }: HeaderProps) {
                 ))}
               </div>
             </nav>
-            <div className="p-4 border-t border-gray-100 mt-4">
+            <div className="p-4 border-t border-gray-100">
+              <a href="/mypage/wishlist" className="flex items-center gap-3 px-3 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors font-medium">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+                위시리스트
+              </a>
+            </div>
+            <div className="p-4 border-t border-gray-100">
               {member ? (
                 <div className="space-y-2">
                   <a href="/mypage" className="block w-full py-3 bg-black text-white rounded-lg text-sm font-bold text-center">{member.name}님</a>

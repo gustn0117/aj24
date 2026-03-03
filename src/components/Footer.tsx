@@ -82,9 +82,9 @@ export default function Footer() {
         {/* Payment methods + Trust badges */}
         <div className="border-t border-gray-800/50 pt-8 pb-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-6">
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
               <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">결제수단</span>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
                 {/* Visa */}
                 <div className="h-7 px-3 bg-gray-800/60 rounded flex items-center justify-center">
                   <span className="text-[10px] font-black text-gray-400 tracking-wider">VISA</span>
@@ -107,7 +107,7 @@ export default function Footer() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-center">
               <div className="flex items-center gap-1.5 text-[10px] text-gray-500">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
