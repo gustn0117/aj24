@@ -37,6 +37,11 @@ export default function HeroBanner({ banners }: HeroBannerProps) {
       {/* Background gradient */}
       <div className={`absolute inset-0 bg-gradient-to-br ${banners[current].bg_gradient} transition-all duration-1000`} />
 
+      {/* Banner image */}
+      {banners[current].image_url && (
+        <img src={banners[current].image_url!} alt="" className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${isTransitioning ? "opacity-0" : "opacity-100"}`} />
+      )}
+
       {/* Noise overlay */}
       <div className="absolute inset-0 noise-bg" />
 

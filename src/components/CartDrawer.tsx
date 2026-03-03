@@ -46,7 +46,11 @@ export default function CartDrawer() {
             <div className="p-4 space-y-4">
               {items.map((item) => (
                 <div key={item.productId} className="flex gap-3">
-                  <div className="w-20 h-24 bg-[#f5f5f5] rounded-lg shrink-0" />
+                  <div className="w-20 h-24 bg-[#f5f5f5] rounded-lg shrink-0 overflow-hidden">
+                    {item.image && item.image !== "/images/placeholder.svg" && (
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    )}
+                  </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[13px] font-medium text-gray-800 line-clamp-2 mb-1">{item.name}</p>
                     <p className="text-[13px] font-bold text-black">{formatPrice(item.sale_price)}</p>

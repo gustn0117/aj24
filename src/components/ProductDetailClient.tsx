@@ -31,7 +31,11 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-8 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
           {/* Image */}
-          <div className="aspect-[3/4] bg-[#f5f5f5] rounded-2xl" />
+          <div className="aspect-[3/4] bg-[#f5f5f5] rounded-2xl overflow-hidden">
+            {product.image && product.image !== "/images/placeholder.svg" && (
+              <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+            )}
+          </div>
 
           {/* Info */}
           <div className="flex flex-col">

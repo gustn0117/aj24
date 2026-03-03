@@ -1,8 +1,75 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Modal from "@/components/admin/Modal";
 import { Product } from "@/lib/types";
+
+function ImageUploader({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function upload(file: File) {
+    setUploading(true);
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+    const data = await res.json();
+    setUploading(false);
+    if (res.ok && data.url) onChange(data.url);
+    else alert(data.error || "업로드 실패");
+  }
+
+  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) upload(file);
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith("image/")) upload(file);
+  }
+
+  const hasImage = value && value !== "/images/placeholder.svg";
+
+  return (
+    <div>
+      <div
+        onClick={() => inputRef.current?.click()}
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={handleDrop}
+        className={`relative border-2 border-dashed rounded-lg cursor-pointer transition-all overflow-hidden ${dragOver ? "border-gray-900 bg-gray-50" : "border-gray-200 hover:border-gray-400"} ${hasImage ? "aspect-[3/4] max-w-[200px]" : "py-8"}`}
+      >
+        {uploading ? (
+          <div className="flex flex-col items-center justify-center h-full py-4">
+            <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+            <p className="text-xs text-gray-400 mt-2">업로드 중...</p>
+          </div>
+        ) : hasImage ? (
+          <>
+            <img src={value} alt="상품" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/0 hover:bg-black/30 transition-colors flex items-center justify-center">
+              <span className="text-white text-xs font-semibold opacity-0 hover:opacity-100">변경</span>
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center text-gray-400">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></svg>
+            <p className="text-xs mt-2">클릭 또는 드래그하여 업로드</p>
+            <p className="text-[10px] text-gray-300 mt-1">JPG, PNG, WebP (최대 5MB)</p>
+          </div>
+        )}
+        <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
+      </div>
+      {hasImage && (
+        <button type="button" onClick={() => onChange("/images/placeholder.svg")} className="text-[11px] text-red-400 hover:text-red-600 mt-1.5">이미지 삭제</button>
+      )}
+    </div>
+  );
+}
 
 const emptyProduct = {
   name: "",
@@ -84,6 +151,7 @@ export default function ProductsPage() {
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
               <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">ID</th>
+              <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider w-12">이미지</th>
               <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">상품명</th>
               <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">섹션</th>
               <th className="px-4 py-3 text-right text-[11px] font-semibold text-gray-500 uppercase tracking-wider">판매가</th>
@@ -95,6 +163,7 @@ export default function ProductsPage() {
             {products.map((p) => (
               <tr key={p.id} className="hover:bg-gray-50/50 transition-colors">
                 <td className="px-4 py-3.5 text-gray-400 font-mono text-xs">#{p.id}</td>
+                <td className="px-4 py-3.5">{p.image && p.image !== "/images/placeholder.svg" ? <img src={p.image} alt="" className="w-10 h-10 object-cover rounded" /> : <div className="w-10 h-10 bg-gray-100 rounded" />}</td>
                 <td className="px-4 py-3.5 font-medium text-gray-900 max-w-xs truncate">{p.name}</td>
                 <td className="px-4 py-3.5"><span className="px-2 py-0.5 rounded-full bg-gray-100 text-[11px] font-medium text-gray-600">{sectionLabels[p.section] || p.section}</span></td>
                 <td className="px-4 py-3.5 text-right font-semibold text-gray-900">{p.sale_price.toLocaleString()}원</td>
@@ -140,7 +209,7 @@ export default function ProductsPage() {
             <div><label className={labelCls}>평점 (0~5)</label><input type="number" step="0.1" min="0" max="5" value={form.rating} onChange={(e) => setForm({ ...form, rating: Number(e.target.value) })} className={inputCls} /></div>
             <div><label className={labelCls}>정렬 순서</label><input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })} className={inputCls} /></div>
           </div>
-          <div><label className={labelCls}>이미지 URL</label><input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} className={inputCls} /></div>
+          <div><label className={labelCls}>상품 이미지</label><ImageUploader value={form.image} onChange={(url) => setForm({ ...form, image: url })} /></div>
           <div>
             <label className={labelCls}>뱃지</label>
             <div className="flex gap-1.5 mb-2 flex-wrap">

@@ -105,9 +105,14 @@ export default function CheckoutPage() {
               <h2 className="text-base font-bold mb-5">주문 요약</h2>
               <div className="space-y-3 mb-5">
                 {items.map((item) => (
-                  <div key={item.productId} className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600 truncate max-w-[60%]">{item.name} x{item.quantity}</span>
-                    <span className="font-semibold">{formatPrice(item.sale_price * item.quantity)}</span>
+                  <div key={item.productId} className="flex items-center gap-3 text-sm">
+                    <div className="w-12 h-14 bg-[#f5f5f5] rounded shrink-0 overflow-hidden">
+                      {item.image && item.image !== "/images/placeholder.svg" && (
+                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      )}
+                    </div>
+                    <span className="text-gray-600 truncate flex-1">{item.name} x{item.quantity}</span>
+                    <span className="font-semibold shrink-0">{formatPrice(item.sale_price * item.quantity)}</span>
                   </div>
                 ))}
               </div>

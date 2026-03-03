@@ -48,6 +48,9 @@ export default function ProductCard({ product }: { product: Product }) {
     <Link href={`/products/${product.id}`} className="group cursor-pointer block">
       {/* Image */}
       <div className="relative aspect-[3/4] bg-[#f5f5f5] rounded-lg overflow-hidden mb-3">
+        {product.image && product.image !== "/images/placeholder.svg" && (
+          <img src={product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+        )}
         {/* Badges */}
         {product.badges.length > 0 && (
           <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">

@@ -1,8 +1,48 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Modal from "@/components/admin/Modal";
 import { Banner } from "@/lib/types";
+
+function BannerImageUploader({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const [uploading, setUploading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function upload(file: File) {
+    setUploading(true);
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+    const data = await res.json();
+    setUploading(false);
+    if (res.ok && data.url) onChange(data.url);
+    else alert(data.error || "업로드 실패");
+  }
+
+  return (
+    <div>
+      <div
+        onClick={() => inputRef.current?.click()}
+        className={`border-2 border-dashed rounded-lg cursor-pointer transition-all overflow-hidden ${value ? "aspect-[21/9] max-w-[400px]" : "py-6"} border-gray-200 hover:border-gray-400`}
+      >
+        {uploading ? (
+          <div className="flex items-center justify-center h-full py-4">
+            <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+          </div>
+        ) : value ? (
+          <img src={value} alt="배너" className="w-full h-full object-cover" />
+        ) : (
+          <div className="flex flex-col items-center text-gray-400">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></svg>
+            <p className="text-xs mt-1.5">배너 이미지 업로드</p>
+          </div>
+        )}
+        <input ref={inputRef} type="file" accept="image/*" onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); }} className="hidden" />
+      </div>
+      {value && <button type="button" onClick={() => onChange("")} className="text-[11px] text-red-400 hover:text-red-600 mt-1">이미지 삭제</button>}
+    </div>
+  );
+}
 
 const gradientPresets = [
   "from-indigo-500 to-purple-600",
@@ -15,7 +55,7 @@ const gradientPresets = [
   "from-sky-500 to-blue-600",
 ];
 
-const emptyBanner = { title: "", subtitle: "", bg_gradient: "from-indigo-500 to-purple-600", link_url: "", sort_order: 0, is_active: true };
+const emptyBanner = { title: "", subtitle: "", bg_gradient: "from-indigo-500 to-purple-600", image_url: "", link_url: "", sort_order: 0, is_active: true };
 
 export default function BannersPage() {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -27,7 +67,7 @@ export default function BannersPage() {
   useEffect(() => { fetchBanners(); }, [fetchBanners]);
 
   const openCreate = () => { setEditing(null); setForm(emptyBanner); setModalOpen(true); };
-  const openEdit = (b: Banner) => { setEditing(b); setForm({ title: b.title, subtitle: b.subtitle || "", bg_gradient: b.bg_gradient, link_url: b.link_url || "", sort_order: b.sort_order, is_active: b.is_active }); setModalOpen(true); };
+  const openEdit = (b: Banner) => { setEditing(b); setForm({ title: b.title, subtitle: b.subtitle || "", bg_gradient: b.bg_gradient, image_url: b.image_url || "", link_url: b.link_url || "", sort_order: b.sort_order, is_active: b.is_active }); setModalOpen(true); };
   const handleSave = async () => { const method = editing ? "PUT" : "POST"; const url = editing ? `/api/admin/banners/${editing.id}` : "/api/admin/banners"; await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) }); setModalOpen(false); fetchBanners(); };
   const handleDelete = async (id: number) => { if (!confirm("정말 삭제하시겠습니까?")) return; await fetch(`/api/admin/banners/${id}`, { method: "DELETE" }); fetchBanners(); };
 
@@ -48,6 +88,7 @@ export default function BannersPage() {
         {banners.map((b) => (
           <div key={b.id} className="bg-white rounded-xl border border-gray-200/80 overflow-hidden hover:shadow-md transition-all group">
             <div className={`bg-gradient-to-br ${b.bg_gradient} p-6 text-white relative overflow-hidden`}>
+              {b.image_url && <img src={b.image_url} alt="" className="absolute inset-0 w-full h-full object-cover" />}
               <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
               <p className="text-[10px] uppercase tracking-widest opacity-50 mb-2 font-semibold">#{b.sort_order} Banner</p>
               <h3 className="text-lg font-bold leading-tight">{b.title}</h3>
@@ -82,10 +123,14 @@ export default function BannersPage() {
             </div>
             <input value={form.bg_gradient} onChange={(e) => setForm({ ...form, bg_gradient: e.target.value })} className={inputCls} placeholder="from-xxx to-xxx" />
           </div>
-          <div className={`bg-gradient-to-br ${form.bg_gradient} p-5 rounded-lg text-white text-center`}>
-            <p className="font-bold">{form.title || "미리보기"}</p>
-            {form.subtitle && <p className="text-sm opacity-75 mt-1">{form.subtitle}</p>}
+          <div className={`relative bg-gradient-to-br ${form.bg_gradient} p-5 rounded-lg text-white text-center overflow-hidden`}>
+            {form.image_url && <img src={form.image_url} alt="" className="absolute inset-0 w-full h-full object-cover" />}
+            <div className="relative z-10">
+              <p className="font-bold">{form.title || "미리보기"}</p>
+              {form.subtitle && <p className="text-sm opacity-75 mt-1">{form.subtitle}</p>}
+            </div>
           </div>
+          <div><label className={labelCls}>배너 이미지</label><BannerImageUploader value={form.image_url} onChange={(url) => setForm({ ...form, image_url: url })} /></div>
           <div className="grid grid-cols-2 gap-3">
             <div><label className={labelCls}>링크 URL</label><input value={form.link_url} onChange={(e) => setForm({ ...form, link_url: e.target.value })} className={inputCls} /></div>
             <div><label className={labelCls}>정렬 순서</label><input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })} className={inputCls} /></div>
