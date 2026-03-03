@@ -31,37 +31,36 @@ export default function BannersPage() {
   const handleSave = async () => { const method = editing ? "PUT" : "POST"; const url = editing ? `/api/admin/banners/${editing.id}` : "/api/admin/banners"; await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) }); setModalOpen(false); fetchBanners(); };
   const handleDelete = async (id: number) => { if (!confirm("정말 삭제하시겠습니까?")) return; await fetch(`/api/admin/banners/${id}`, { method: "DELETE" }); fetchBanners(); };
 
-  const inputCls = "w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all";
-  const labelCls = "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5";
+  const inputCls = "w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900/10 transition-all bg-white";
+  const labelCls = "block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">{banners.length}개 배너</p>
-        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-indigo-200 transition-all active:scale-95">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+        <p className="text-sm text-gray-500"><span className="font-semibold text-gray-900">{banners.length}</span>개 배너</p>
+        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-gray-800 transition-all active:scale-95">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
           배너 추가
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {banners.map((b) => (
-          <div key={b.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all group">
-            <div className={`bg-gradient-to-br ${b.bg_gradient} p-8 text-white relative overflow-hidden`}>
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
+          <div key={b.id} className="bg-white rounded-xl border border-gray-200/80 overflow-hidden hover:shadow-md transition-all group">
+            <div className={`bg-gradient-to-br ${b.bg_gradient} p-6 text-white relative overflow-hidden`}>
               <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
-              <p className="text-[10px] uppercase tracking-widest opacity-60 mb-2 font-semibold">#{b.sort_order} Banner</p>
-              <h3 className="text-xl font-bold leading-tight">{b.title}</h3>
-              {b.subtitle && <p className="text-sm opacity-75 mt-1.5">{b.subtitle}</p>}
+              <p className="text-[10px] uppercase tracking-widest opacity-50 mb-2 font-semibold">#{b.sort_order} Banner</p>
+              <h3 className="text-lg font-bold leading-tight">{b.title}</h3>
+              {b.subtitle && <p className="text-sm opacity-70 mt-1">{b.subtitle}</p>}
             </div>
-            <div className="p-4 flex items-center justify-between">
-              <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-lg ${b.is_active ? "bg-green-50 text-green-600" : "bg-gray-50 text-gray-400"}`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${b.is_active ? "bg-green-500" : "bg-gray-300"}`} />
+            <div className="p-3.5 flex items-center justify-between">
+              <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium ${b.is_active ? "text-emerald-600" : "text-gray-400"}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${b.is_active ? "bg-emerald-500" : "bg-gray-300"}`} />
                 {b.is_active ? "활성" : "비활성"}
               </span>
               <div className="flex gap-1">
-                <button onClick={() => openEdit(b)} className="px-2.5 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">수정</button>
-                <button onClick={() => handleDelete(b.id)} className="px-2.5 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 rounded-lg transition-colors">삭제</button>
+                <button onClick={() => openEdit(b)} className="px-2 py-1 text-[11px] font-medium text-gray-600 hover:bg-gray-100 rounded-md transition-colors">수정</button>
+                <button onClick={() => handleDelete(b.id)} className="px-2 py-1 text-[11px] font-medium text-red-500 hover:bg-red-50 rounded-md transition-colors">삭제</button>
               </div>
             </div>
           </div>
@@ -78,13 +77,13 @@ export default function BannersPage() {
             <div className="flex flex-wrap gap-2 mb-3">
               {gradientPresets.map((g) => (
                 <button key={g} onClick={() => setForm({ ...form, bg_gradient: g })}
-                  className={`w-10 h-10 rounded-xl bg-gradient-to-br ${g} transition-all ${form.bg_gradient === g ? "ring-2 ring-offset-2 ring-indigo-500 scale-110" : "hover:scale-105"}`} />
+                  className={`w-9 h-9 rounded-lg bg-gradient-to-br ${g} transition-all ${form.bg_gradient === g ? "ring-2 ring-offset-2 ring-gray-900 scale-110" : "hover:scale-105"}`} />
               ))}
             </div>
             <input value={form.bg_gradient} onChange={(e) => setForm({ ...form, bg_gradient: e.target.value })} className={inputCls} placeholder="from-xxx to-xxx" />
           </div>
-          <div className={`bg-gradient-to-br ${form.bg_gradient} p-6 rounded-xl text-white text-center`}>
-            <p className="font-bold text-lg">{form.title || "미리보기"}</p>
+          <div className={`bg-gradient-to-br ${form.bg_gradient} p-5 rounded-lg text-white text-center`}>
+            <p className="font-bold">{form.title || "미리보기"}</p>
             {form.subtitle && <p className="text-sm opacity-75 mt-1">{form.subtitle}</p>}
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -92,10 +91,10 @@ export default function BannersPage() {
             <div><label className={labelCls}>정렬 순서</label><input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })} className={inputCls} /></div>
           </div>
           <label className="flex items-center gap-2.5 cursor-pointer">
-            <div className="relative"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} className="sr-only peer" /><div className="w-9 h-5 bg-gray-200 peer-checked:bg-indigo-500 rounded-full transition-colors" /><div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm peer-checked:translate-x-4 transition-transform" /></div>
-            <span className="text-sm font-medium text-gray-700">활성화</span>
+            <div className="relative"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} className="sr-only peer" /><div className="w-9 h-5 bg-gray-200 peer-checked:bg-gray-900 rounded-full transition-colors" /><div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm peer-checked:translate-x-4 transition-transform" /></div>
+            <span className="text-xs font-medium text-gray-700">활성화</span>
           </label>
-          <button onClick={handleSave} className="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-bold text-sm hover:shadow-lg hover:shadow-indigo-200 transition-all active:scale-[0.98]">{editing ? "수정하기" : "추가하기"}</button>
+          <button onClick={handleSave} className="w-full py-3 bg-gray-900 text-white rounded-lg font-bold text-sm hover:bg-gray-800 transition-all active:scale-[0.98]">{editing ? "수정하기" : "추가하기"}</button>
         </div>
       </Modal>
     </div>

@@ -40,22 +40,31 @@ html {
 
 /* Selection */
 ::selection {
-  background: #6366f1;
+  background: #111827;
   color: white;
 }
 
 @layer components {
   .badge {
-    @apply inline-block px-2.5 py-1 text-[10px] font-bold text-white rounded-md uppercase tracking-wider;
+    @apply inline-block px-2 py-0.5 text-[10px] font-bold text-white rounded-md uppercase tracking-wider;
   }
   .badge-hit {
-    @apply bg-gradient-to-r from-red-500 to-rose-500;
+    @apply bg-black;
   }
   .badge-popular {
-    @apply bg-gradient-to-r from-orange-400 to-amber-500;
+    @apply bg-gradient-to-r from-rose-500 to-pink-500;
   }
   .badge-oneplus {
     @apply bg-gradient-to-r from-violet-500 to-purple-600;
+  }
+  .badge-new {
+    @apply bg-emerald-500;
+  }
+  .badge-sale {
+    @apply bg-red-500;
+  }
+  .badge-best {
+    @apply bg-amber-500;
   }
 }
 
@@ -72,6 +81,10 @@ html {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -79,6 +92,14 @@ html {
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .animate-fade-in-up {
@@ -90,8 +111,17 @@ html {
 .animate-slide-down {
   animation: slideDown 0.3s ease-out forwards;
 }
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out forwards;
+}
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
 }
 
 /* Stagger children animation */
@@ -110,9 +140,9 @@ html {
 
 /* Glass effect */
 .glass {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 /* Gradient text */
@@ -121,4 +151,25 @@ html {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Image zoom on hover */
+.img-zoom {
+  transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.group:hover .img-zoom {
+  transform: scale(1.08);
+}
+
+/* Marquee text strip */
+.marquee-strip {
+  white-space: nowrap;
+  overflow: hidden;
+}
+.marquee-strip .marquee-inner {
+  display: inline-flex;
+  animation: marquee 25s linear infinite;
+}
+.marquee-strip:hover .marquee-inner {
+  animation-play-state: paused;
 }

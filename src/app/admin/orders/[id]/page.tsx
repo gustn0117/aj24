@@ -17,7 +17,7 @@ const statusStyle: Record<string, string> = {
   pending: "bg-amber-50 text-amber-700 border-amber-200",
   confirmed: "bg-blue-50 text-blue-700 border-blue-200",
   shipping: "bg-purple-50 text-purple-700 border-purple-200",
-  delivered: "bg-green-50 text-green-700 border-green-200",
+  delivered: "bg-emerald-50 text-emerald-700 border-emerald-200",
   cancelled: "bg-gray-50 text-gray-500 border-gray-200",
   refunded: "bg-red-50 text-red-700 border-red-200",
 };
@@ -52,31 +52,28 @@ export default function OrderDetailPage() {
     <div className="flex items-center justify-center py-32">
       <div className="flex items-center gap-3 text-gray-400">
         <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-        로딩 중...
+        <span className="text-sm">로딩 중...</span>
       </div>
     </div>
   );
 
   return (
-    <div className="space-y-6">
-      <button onClick={() => router.push("/admin/orders")} className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
+    <div className="space-y-5">
+      <button onClick={() => router.push("/admin/orders")} className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-gray-800 transition-colors font-medium">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
         목록으로
       </button>
 
       <div className="flex items-center gap-3">
-        <h1 className="text-2xl font-bold text-gray-900">주문 #{order.id}</h1>
-        <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold border ${statusStyle[order.status] || ""}`}>
+        <h1 className="text-xl font-bold text-gray-900">주문 #{order.id}</h1>
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold border ${statusStyle[order.status] || ""}`}>
           {statusOptions.find(s => s.value === order.status)?.label || order.status}
         </span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
-          <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-            주문 정보
-          </h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="bg-white rounded-xl border border-gray-200/80 p-5">
+          <h2 className="font-semibold text-gray-900 mb-4 text-sm">주문 정보</h2>
           <dl className="space-y-3 text-sm">
             {[
               { label: "주문자", value: order.member_name },
@@ -86,61 +83,55 @@ export default function OrderDetailPage() {
               { label: "주문일", value: new Date(order.created_at).toLocaleString("ko-KR") },
             ].map((item) => (
               <div key={item.label} className="flex justify-between items-start">
-                <dt className="text-gray-400 shrink-0">{item.label}</dt>
-                <dd className="text-right text-gray-900 font-medium">{item.value}</dd>
+                <dt className="text-gray-400 text-xs shrink-0">{item.label}</dt>
+                <dd className="text-right text-gray-900 font-medium text-xs">{item.value}</dd>
               </div>
             ))}
           </dl>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
-          <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-            상태 변경
-          </h2>
+        <div className="bg-white rounded-xl border border-gray-200/80 p-5">
+          <h2 className="font-semibold text-gray-900 mb-4 text-sm">상태 변경</h2>
           <div className="flex gap-2">
             <select value={status} onChange={(e) => setStatus(e.target.value)}
-              className="flex-1 px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10">
+              className="flex-1 px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900/10">
               {statusOptions.map((o) => (<option key={o.value} value={o.value}>{o.label}</option>))}
             </select>
-            <button onClick={updateStatus} className="px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-indigo-200 transition-all active:scale-95">
+            <button onClick={updateStatus} className="px-4 py-2.5 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-gray-800 transition-all active:scale-95">
               변경
             </button>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-        <div className="p-6 pb-0">
-          <h2 className="font-bold text-gray-900 flex items-center gap-2">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
-            주문 상품
-          </h2>
+      <div className="bg-white rounded-xl border border-gray-200/80 overflow-hidden">
+        <div className="p-5 pb-0">
+          <h2 className="font-semibold text-gray-900 text-sm">주문 상품</h2>
         </div>
-        <table className="w-full text-sm mt-4">
+        <table className="w-full text-sm mt-3">
           <thead>
-            <tr className="border-b border-gray-100">
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">상품명</th>
-              <th className="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">수량</th>
-              <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">단가</th>
-              <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">소계</th>
+            <tr className="border-b border-gray-100 bg-gray-50/50">
+              <th className="px-5 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">상품명</th>
+              <th className="px-5 py-3 text-center text-[11px] font-semibold text-gray-500 uppercase tracking-wider">수량</th>
+              <th className="px-5 py-3 text-right text-[11px] font-semibold text-gray-500 uppercase tracking-wider">단가</th>
+              <th className="px-5 py-3 text-right text-[11px] font-semibold text-gray-500 uppercase tracking-wider">소계</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
             {items.map((item) => (
               <tr key={item.id}>
-                <td className="px-6 py-4 font-medium text-gray-900">{item.product_name}</td>
-                <td className="px-6 py-4 text-center"><span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gray-100 text-xs font-semibold">{item.quantity}</span></td>
-                <td className="px-6 py-4 text-right">{item.unit_price.toLocaleString()}원</td>
-                <td className="px-6 py-4 text-right font-semibold">{(item.unit_price * item.quantity).toLocaleString()}원</td>
+                <td className="px-5 py-3.5 font-medium text-gray-900">{item.product_name}</td>
+                <td className="px-5 py-3.5 text-center"><span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-gray-100 text-[11px] font-semibold">{item.quantity}</span></td>
+                <td className="px-5 py-3.5 text-right text-gray-600">{item.unit_price.toLocaleString()}원</td>
+                <td className="px-5 py-3.5 text-right font-semibold text-gray-900">{(item.unit_price * item.quantity).toLocaleString()}원</td>
               </tr>
             ))}
           </tbody>
           <tfoot>
             <tr className="border-t-2 border-gray-100">
-              <td colSpan={3} className="px-6 py-5 text-right font-bold text-gray-500">합계</td>
-              <td className="px-6 py-5 text-right">
-                <span className="text-2xl font-bold text-gray-900">{order.total_amount.toLocaleString()}<span className="text-sm font-semibold text-gray-400 ml-0.5">원</span></span>
+              <td colSpan={3} className="px-5 py-4 text-right font-semibold text-gray-500 text-xs">합계</td>
+              <td className="px-5 py-4 text-right">
+                <span className="text-xl font-bold text-gray-900">{order.total_amount.toLocaleString()}<span className="text-xs font-semibold text-gray-400 ml-0.5">원</span></span>
               </td>
             </tr>
           </tfoot>

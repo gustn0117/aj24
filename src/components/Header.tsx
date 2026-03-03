@@ -25,6 +25,17 @@ export default function Header({ categories }: HeaderProps) {
           : "bg-white border-b border-gray-100"
       }`}
     >
+      {/* Top bar */}
+      <div className="hidden sm:block bg-gray-950 text-white">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 flex items-center justify-between h-8 text-[11px]">
+          <p className="text-gray-400">무료배송 | 5만원 이상 구매 시</p>
+          <div className="flex items-center gap-4 text-gray-400">
+            <a href="#" className="hover:text-white transition-colors">고객센터</a>
+            <a href="#" className="hover:text-white transition-colors">마이페이지</a>
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
         {/* Logo */}
         <a href="/" className="flex items-center gap-1.5 shrink-0 group">
@@ -35,12 +46,12 @@ export default function Header({ categories }: HeaderProps) {
         </a>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-1 ml-10">
+        <nav className="hidden lg:flex items-center gap-0.5 ml-10">
           {categories.map((cat) => (
             <a
               key={cat.id}
               href="#"
-              className="relative text-sm text-gray-600 hover:text-gray-900 whitespace-nowrap transition-colors font-medium px-3 py-2 rounded-lg hover:bg-gray-50"
+              className="relative text-[13px] text-gray-600 hover:text-gray-900 whitespace-nowrap transition-colors font-medium px-3 py-2 rounded-lg hover:bg-gray-50"
             >
               {cat.name}
             </a>
@@ -48,26 +59,26 @@ export default function Header({ categories }: HeaderProps) {
         </nav>
 
         {/* Actions */}
-        <div className="flex items-center gap-1.5 shrink-0">
-          <button className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition-all hover:shadow-lg hover:shadow-gray-300/30 active:scale-95">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <div className="flex items-center gap-1 shrink-0">
+          <button className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full text-xs font-semibold hover:bg-gray-800 transition-all active:scale-95">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
             LOGIN
           </button>
-          <button className="relative p-2.5 hover:bg-gray-100 rounded-xl transition-all active:scale-95">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <button className="relative p-2 hover:bg-gray-100 rounded-full transition-all active:scale-95">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
               <line x1="3" y1="6" x2="21" y2="6" />
               <path d="M16 10a4 4 0 01-8 0" />
             </svg>
-            <span className="absolute top-1 right-1 bg-gradient-to-r from-red-500 to-rose-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-sm">
+            <span className="absolute -top-0.5 -right-0.5 bg-gray-900 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
               0
             </span>
           </button>
-          <button className="p-2.5 hover:bg-gray-100 rounded-xl transition-all active:scale-95">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <button className="p-2 hover:bg-gray-100 rounded-full transition-all active:scale-95">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
@@ -75,7 +86,7 @@ export default function Header({ categories }: HeaderProps) {
 
           {/* Mobile menu toggle */}
           <button
-            className="lg:hidden p-2.5 hover:bg-gray-100 rounded-xl transition-all active:scale-95"
+            className="lg:hidden p-2 hover:bg-gray-100 rounded-full transition-all active:scale-95"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -101,7 +112,7 @@ export default function Header({ categories }: HeaderProps) {
               <a
                 key={cat.id}
                 href="#"
-                className="text-sm text-gray-600 hover:text-gray-900 px-4 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all font-medium"
+                className="text-sm text-gray-600 hover:text-gray-900 px-4 py-2 rounded-full bg-gray-50 hover:bg-gray-100 transition-all font-medium"
               >
                 {cat.name}
               </a>
