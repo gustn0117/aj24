@@ -32,9 +32,9 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-5">
-              <img src="/images/logo.png" alt="AJ24" className="h-8 w-auto brightness-0 invert" />
-              <span className="text-white font-extrabold text-lg">AJ24</span>
+            <div className="flex items-center gap-1.5 mb-5">
+              <img src="/images/logo.png" alt="AJ24" className="h-6 w-auto brightness-0 invert" />
+              <span className="text-white font-extrabold text-sm">AJ24</span>
             </div>
             <p className="text-sm leading-relaxed text-gray-500 mb-5">
               최고의 제품을 최저가로 만나보세요.

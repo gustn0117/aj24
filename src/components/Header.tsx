@@ -27,9 +27,9 @@ export default function Header({ categories }: HeaderProps) {
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2 shrink-0 group">
-          <img src="/images/logo.png" alt="AJ24" className="h-9 w-auto" />
-          <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+        <a href="/" className="flex items-center gap-1.5 shrink-0 group">
+          <img src="/images/logo.png" alt="AJ24" className="h-7 w-auto" />
+          <span className="text-[15px] font-extrabold tracking-tight text-gray-900">
             AJ24
           </span>
         </a>
