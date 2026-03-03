@@ -18,11 +18,9 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
   const [quantity, setQuantity] = useState(1);
   const wishlisted = isWishlisted(product.id);
 
-  const discountPercent = product.discount || (
-    product.original_price > product.sale_price
-      ? Math.round((1 - product.sale_price / product.original_price) * 100)
-      : 0
-  );
+  const discountPercent = product.original_price > product.sale_price
+    ? Math.round((1 - product.sale_price / product.original_price) * 100)
+    : 0;
 
   return (
     <main className="min-h-screen bg-white">

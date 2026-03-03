@@ -3,7 +3,6 @@ export interface Product {
   name: string;
   original_price: number;
   sale_price: number;
-  discount: number | null;
   image: string;
   badges: string[];
   rating: number;

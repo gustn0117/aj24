@@ -75,7 +75,7 @@ const emptyProduct = {
   name: "",
   original_price: 0,
   sale_price: 0,
-  discount: null as number | null,
+  discount: null as null,
   image: "/images/placeholder.svg",
   badges: [] as string[],
   rating: 0,
@@ -117,7 +117,7 @@ export default function ProductsPage() {
   const openCreate = () => { setEditing(null); setForm(emptyProduct); setBadgeInput(""); setModalOpen(true); };
   const openEdit = (p: Product) => {
     setEditing(p);
-    setForm({ name: p.name, original_price: p.original_price, sale_price: p.sale_price, discount: p.discount, image: p.image, badges: p.badges, rating: p.rating, category: p.category, sort_order: p.sort_order, is_active: p.is_active, description: p.description || "" });
+    setForm({ name: p.name, original_price: p.original_price, sale_price: p.sale_price, discount: null, image: p.image, badges: p.badges, rating: p.rating, category: p.category, sort_order: p.sort_order, is_active: p.is_active, description: p.description || "" });
     setBadgeInput(""); setModalOpen(true);
   };
   const handleSave = async () => {
@@ -219,10 +219,15 @@ export default function ProductsPage() {
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div><label className={labelCls}>원가</label><input type="number" value={form.original_price} onChange={(e) => setForm({ ...form, original_price: Number(e.target.value) })} className={inputCls} /></div>
-            <div><label className={labelCls}>판매가</label><input type="number" value={form.sale_price} onChange={(e) => setForm({ ...form, sale_price: Number(e.target.value) })} className={inputCls} /></div>
-            <div><label className={labelCls}>할인율(%)</label><input type="number" value={form.discount ?? ""} onChange={(e) => setForm({ ...form, discount: e.target.value ? Number(e.target.value) : null })} className={inputCls} /></div>
+            <div>
+              <label className={labelCls}>판매가</label>
+              <input type="number" value={form.sale_price} onChange={(e) => setForm({ ...form, sale_price: Number(e.target.value) })} className={inputCls} />
+              {form.original_price > form.sale_price && form.sale_price > 0 && (
+                <p className="text-xs text-red-500 font-semibold mt-1">-{Math.round((1 - form.sale_price / form.original_price) * 100)}% 할인</p>
+              )}
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div><label className={labelCls}>평점 (0~5)</label><input type="number" step="0.1" min="0" max="5" value={form.rating} onChange={(e) => setForm({ ...form, rating: Number(e.target.value) })} className={inputCls} /></div>
