@@ -14,147 +14,96 @@ export default function MembersPage() {
   const [editing, setEditing] = useState<Member | null>(null);
   const [form, setForm] = useState(emptyMember);
 
-  const fetchMembers = useCallback(async () => {
-    const res = await fetch(`/api/admin/members?page=${page}`);
-    const data = await res.json();
-    setMembers(data.data || []);
-    setTotal(data.total || 0);
-  }, [page]);
-
+  const fetchMembers = useCallback(async () => { const res = await fetch(`/api/admin/members?page=${page}`); const data = await res.json(); setMembers(data.data || []); setTotal(data.total || 0); }, [page]);
   useEffect(() => { fetchMembers(); }, [fetchMembers]);
 
-  const openCreate = () => {
-    setEditing(null);
-    setForm(emptyMember);
-    setModalOpen(true);
-  };
+  const openCreate = () => { setEditing(null); setForm(emptyMember); setModalOpen(true); };
+  const openEdit = (m: Member) => { setEditing(m); setForm({ name: m.name, email: m.email, phone: m.phone || "", address: m.address || "", status: m.status, memo: m.memo || "" }); setModalOpen(true); };
+  const handleSave = async () => { const method = editing ? "PUT" : "POST"; const url = editing ? `/api/admin/members/${editing.id}` : "/api/admin/members"; await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) }); setModalOpen(false); fetchMembers(); };
+  const handleDelete = async (id: number) => { if (!confirm("정말 삭제하시겠습니까?")) return; await fetch(`/api/admin/members/${id}`, { method: "DELETE" }); fetchMembers(); };
 
-  const openEdit = (m: Member) => {
-    setEditing(m);
-    setForm({ name: m.name, email: m.email, phone: m.phone || "", address: m.address || "", status: m.status, memo: m.memo || "" });
-    setModalOpen(true);
+  const statusStyle: Record<string, string> = {
+    active: "bg-green-50 text-green-700 border-green-200",
+    inactive: "bg-gray-50 text-gray-500 border-gray-200",
+    banned: "bg-red-50 text-red-700 border-red-200",
   };
-
-  const handleSave = async () => {
-    const method = editing ? "PUT" : "POST";
-    const url = editing ? `/api/admin/members/${editing.id}` : "/api/admin/members";
-    await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setModalOpen(false);
-    fetchMembers();
-  };
-
-  const handleDelete = async (id: number) => {
-    if (!confirm("정말 삭제하시겠습니까?")) return;
-    await fetch(`/api/admin/members/${id}`, { method: "DELETE" });
-    fetchMembers();
-  };
-
-  const statusColor: Record<string, string> = {
-    active: "bg-green-100 text-green-700",
-    inactive: "bg-gray-100 text-gray-600",
-    banned: "bg-red-100 text-red-700",
-  };
+  const statusLabel: Record<string, string> = { active: "활성", inactive: "비활성", banned: "차단" };
+  const inputCls = "w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all";
+  const labelCls = "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5";
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">회원 관리</h1>
-        <button onClick={openCreate} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
-          + 회원 추가
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-500">전체 {total}명 회원</p>
+        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-indigo-200 transition-all active:scale-95">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+          회원 추가
         </button>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 text-gray-500">
-            <tr>
-              <th className="px-4 py-3 text-left">ID</th>
-              <th className="px-4 py-3 text-left">이름</th>
-              <th className="px-4 py-3 text-left">이메일</th>
-              <th className="px-4 py-3 text-left">전화번호</th>
-              <th className="px-4 py-3 text-center">상태</th>
-              <th className="px-4 py-3 text-center">가입일</th>
-              <th className="px-4 py-3 text-center">관리</th>
+          <thead>
+            <tr className="border-b border-gray-100">
+              <th className="px-5 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
+              <th className="px-5 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">이름</th>
+              <th className="px-5 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">이메일</th>
+              <th className="px-5 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">전화번호</th>
+              <th className="px-5 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">상태</th>
+              <th className="px-5 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">가입일</th>
+              <th className="px-5 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">관리</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-50">
             {members.map((m) => (
-              <tr key={m.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3">{m.id}</td>
-                <td className="px-4 py-3 font-medium">{m.name}</td>
-                <td className="px-4 py-3 text-gray-500">{m.email}</td>
-                <td className="px-4 py-3 text-gray-500">{m.phone || "-"}</td>
-                <td className="px-4 py-3 text-center">
-                  <span className={`px-2 py-0.5 rounded text-xs ${statusColor[m.status]}`}>{m.status}</span>
+              <tr key={m.id} className="hover:bg-gray-50/50 transition-colors">
+                <td className="px-5 py-4 text-gray-400 font-mono text-xs">#{m.id}</td>
+                <td className="px-5 py-4 font-medium text-gray-900">{m.name}</td>
+                <td className="px-5 py-4 text-gray-500">{m.email}</td>
+                <td className="px-5 py-4 text-gray-500">{m.phone || "-"}</td>
+                <td className="px-5 py-4 text-center">
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border ${statusStyle[m.status]}`}>
+                    {statusLabel[m.status]}
+                  </span>
                 </td>
-                <td className="px-4 py-3 text-center text-gray-400 text-xs">
-                  {new Date(m.created_at).toLocaleDateString("ko-KR")}
-                </td>
-                <td className="px-4 py-3 text-center">
-                  <button onClick={() => openEdit(m)} className="text-blue-600 hover:underline mr-3">수정</button>
-                  <button onClick={() => handleDelete(m.id)} className="text-red-500 hover:underline">삭제</button>
+                <td className="px-5 py-4 text-center text-gray-400 text-xs">{new Date(m.created_at).toLocaleDateString("ko-KR")}</td>
+                <td className="px-5 py-4 text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <button onClick={() => openEdit(m)} className="px-2.5 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">수정</button>
+                    <button onClick={() => handleDelete(m.id)} className="px-2.5 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 rounded-lg transition-colors">삭제</button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        {members.length === 0 && <p className="text-center py-8 text-gray-400">회원이 없습니다.</p>}
+        {members.length === 0 && <div className="text-center py-16"><p className="text-gray-400 text-sm">회원이 없습니다.</p></div>}
       </div>
 
       {total > 20 && (
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="flex justify-center gap-1.5">
           {Array.from({ length: Math.ceil(total / 20) }, (_, i) => (
-            <button key={i} onClick={() => setPage(i + 1)}
-              className={`w-8 h-8 rounded text-sm ${page === i + 1 ? "bg-gray-900 text-white" : "bg-white border"}`}>
-              {i + 1}
-            </button>
+            <button key={i} onClick={() => setPage(i + 1)} className={`w-9 h-9 rounded-xl text-sm font-medium transition-all ${page === i + 1 ? "bg-gray-900 text-white shadow-md" : "bg-white text-gray-500 border border-gray-200"}`}>{i + 1}</button>
           ))}
         </div>
       )}
 
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "회원 수정" : "회원 추가"}>
-        <div className="space-y-3">
+        <div className="space-y-4">
+          <div><label className={labelCls}>이름</label><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputCls} /></div>
+          <div><label className={labelCls}>이메일</label><input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputCls} /></div>
+          <div><label className={labelCls}>전화번호</label><input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputCls} /></div>
+          <div><label className={labelCls}>주소</label><input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className={inputCls} /></div>
           <div>
-            <label className="block text-sm font-medium mb-1">이름</label>
-            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-sm" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">이메일</label>
-            <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-sm" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">전화번호</label>
-            <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-sm" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">주소</label>
-            <input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-sm" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">상태</label>
-            <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as "active" | "inactive" | "banned" })}
-              className="w-full px-3 py-2 border rounded-lg text-sm">
+            <label className={labelCls}>상태</label>
+            <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as "active" | "inactive" | "banned" })} className={inputCls}>
               <option value="active">활성</option>
               <option value="inactive">비활성</option>
               <option value="banned">차단</option>
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">메모</label>
-            <textarea value={form.memo} onChange={(e) => setForm({ ...form, memo: e.target.value })}
-              rows={2} className="w-full px-3 py-2 border rounded-lg text-sm" />
-          </div>
-          <button onClick={handleSave} className="w-full py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">
-            {editing ? "수정" : "추가"}
-          </button>
+          <div><label className={labelCls}>메모</label><textarea value={form.memo} onChange={(e) => setForm({ ...form, memo: e.target.value })} rows={2} className={`${inputCls} resize-none`} /></div>
+          <button onClick={handleSave} className="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-bold text-sm hover:shadow-lg hover:shadow-indigo-200 transition-all active:scale-[0.98]">{editing ? "수정하기" : "추가하기"}</button>
         </div>
       </Modal>
     </div>

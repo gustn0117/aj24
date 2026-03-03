@@ -40,213 +40,124 @@ export default function ProductsPage() {
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
-  const openCreate = () => {
-    setEditing(null);
-    setForm(emptyProduct);
-    setBadgeInput("");
-    setModalOpen(true);
-  };
-
+  const openCreate = () => { setEditing(null); setForm(emptyProduct); setBadgeInput(""); setModalOpen(true); };
   const openEdit = (p: Product) => {
     setEditing(p);
-    setForm({
-      name: p.name,
-      original_price: p.original_price,
-      sale_price: p.sale_price,
-      discount: p.discount,
-      image: p.image,
-      badges: p.badges,
-      rating: p.rating,
-      category: p.category,
-      section: p.section,
-      sort_order: p.sort_order,
-      is_active: p.is_active,
-      description: p.description || "",
-    });
-    setBadgeInput("");
-    setModalOpen(true);
+    setForm({ name: p.name, original_price: p.original_price, sale_price: p.sale_price, discount: p.discount, image: p.image, badges: p.badges, rating: p.rating, category: p.category, section: p.section, sort_order: p.sort_order, is_active: p.is_active, description: p.description || "" });
+    setBadgeInput(""); setModalOpen(true);
   };
-
   const handleSave = async () => {
     const method = editing ? "PUT" : "POST";
     const url = editing ? `/api/admin/products/${editing.id}` : "/api/admin/products";
-    await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setModalOpen(false);
-    fetchProducts();
+    await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+    setModalOpen(false); fetchProducts();
   };
+  const handleDelete = async (id: number) => { if (!confirm("정말 삭제하시겠습니까?")) return; await fetch(`/api/admin/products/${id}`, { method: "DELETE" }); fetchProducts(); };
+  const addBadge = () => { if (badgeInput.trim() && !form.badges.includes(badgeInput.trim())) { setForm({ ...form, badges: [...form.badges, badgeInput.trim()] }); setBadgeInput(""); } };
+  const removeBadge = (b: string) => { setForm({ ...form, badges: form.badges.filter((x) => x !== b) }); };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("정말 삭제하시겠습니까?")) return;
-    await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
-    fetchProducts();
-  };
-
-  const addBadge = () => {
-    if (badgeInput.trim() && !form.badges.includes(badgeInput.trim())) {
-      setForm({ ...form, badges: [...form.badges, badgeInput.trim()] });
-      setBadgeInput("");
-    }
-  };
-
-  const removeBadge = (b: string) => {
-    setForm({ ...form, badges: form.badges.filter((x) => x !== b) });
-  };
+  const sectionLabels: Record<string, string> = { megahit: "메가히트", recommend: "추천", best: "베스트" };
+  const inputCls = "w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all";
+  const labelCls = "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5";
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">상품 관리</h1>
-        <button onClick={openCreate} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
-          + 상품 추가
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-500">전체 {total}개 상품</p>
+        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-indigo-200 transition-all active:scale-95">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+          상품 추가
         </button>
       </div>
 
-      <div className="mb-4 flex gap-2">
-        {["", "megahit", "recommend", "best"].map((s) => (
-          <button
-            key={s}
-            onClick={() => { setSection(s); setPage(1); }}
-            className={`px-3 py-1.5 text-sm rounded-lg ${section === s ? "bg-gray-900 text-white" : "bg-white text-gray-600 border"}`}
-          >
-            {s || "전체"}
+      <div className="flex gap-2">
+        {[{ value: "", label: "전체" }, { value: "megahit", label: "메가히트" }, { value: "recommend", label: "추천" }, { value: "best", label: "베스트" }].map((s) => (
+          <button key={s.value} onClick={() => { setSection(s.value); setPage(1); }}
+            className={`px-4 py-2 text-sm rounded-xl font-medium transition-all ${section === s.value ? "bg-gray-900 text-white shadow-md" : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300"}`}>
+            {s.label}
           </button>
         ))}
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 text-gray-500">
-            <tr>
-              <th className="px-4 py-3 text-left">ID</th>
-              <th className="px-4 py-3 text-left">상품명</th>
-              <th className="px-4 py-3 text-left">섹션</th>
-              <th className="px-4 py-3 text-right">판매가</th>
-              <th className="px-4 py-3 text-center">활성</th>
-              <th className="px-4 py-3 text-center">관리</th>
+          <thead>
+            <tr className="border-b border-gray-100">
+              <th className="px-5 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
+              <th className="px-5 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">상품명</th>
+              <th className="px-5 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">섹션</th>
+              <th className="px-5 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">판매가</th>
+              <th className="px-5 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">상태</th>
+              <th className="px-5 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">관리</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-50">
             {products.map((p) => (
-              <tr key={p.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3">{p.id}</td>
-                <td className="px-4 py-3 max-w-xs truncate">{p.name}</td>
-                <td className="px-4 py-3">
-                  <span className="px-2 py-0.5 bg-gray-100 rounded text-xs">{p.section}</span>
+              <tr key={p.id} className="hover:bg-gray-50/50 transition-colors">
+                <td className="px-5 py-4 text-gray-400 font-mono text-xs">#{p.id}</td>
+                <td className="px-5 py-4 font-medium text-gray-900 max-w-xs truncate">{p.name}</td>
+                <td className="px-5 py-4"><span className="px-2.5 py-1 rounded-lg bg-gray-100 text-xs font-medium text-gray-600">{sectionLabels[p.section] || p.section}</span></td>
+                <td className="px-5 py-4 text-right font-semibold">{p.sale_price.toLocaleString()}원</td>
+                <td className="px-5 py-4 text-center">
+                  <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${p.is_active ? "text-green-600" : "text-gray-400"}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${p.is_active ? "bg-green-500" : "bg-gray-300"}`} />{p.is_active ? "활성" : "비활성"}
+                  </span>
                 </td>
-                <td className="px-4 py-3 text-right">{p.sale_price.toLocaleString()}원</td>
-                <td className="px-4 py-3 text-center">
-                  <span className={`w-2 h-2 rounded-full inline-block ${p.is_active ? "bg-green-500" : "bg-gray-300"}`} />
-                </td>
-                <td className="px-4 py-3 text-center">
-                  <button onClick={() => openEdit(p)} className="text-blue-600 hover:underline mr-3">수정</button>
-                  <button onClick={() => handleDelete(p.id)} className="text-red-500 hover:underline">삭제</button>
+                <td className="px-5 py-4 text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <button onClick={() => openEdit(p)} className="px-2.5 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">수정</button>
+                    <button onClick={() => handleDelete(p.id)} className="px-2.5 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 rounded-lg transition-colors">삭제</button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        {products.length === 0 && <p className="text-center py-8 text-gray-400">상품이 없습니다.</p>}
+        {products.length === 0 && <div className="text-center py-16"><p className="text-gray-400 text-sm">상품이 없습니다.</p></div>}
       </div>
 
       {total > 20 && (
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="flex justify-center gap-1.5">
           {Array.from({ length: Math.ceil(total / 20) }, (_, i) => (
-            <button key={i} onClick={() => setPage(i + 1)}
-              className={`w-8 h-8 rounded text-sm ${page === i + 1 ? "bg-gray-900 text-white" : "bg-white border"}`}>
-              {i + 1}
-            </button>
+            <button key={i} onClick={() => setPage(i + 1)} className={`w-9 h-9 rounded-xl text-sm font-medium transition-all ${page === i + 1 ? "bg-gray-900 text-white shadow-md" : "bg-white text-gray-500 border border-gray-200"}`}>{i + 1}</button>
           ))}
         </div>
       )}
 
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "상품 수정" : "상품 추가"}>
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium mb-1">상품명</label>
-            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-sm" />
-          </div>
+        <div className="space-y-4">
+          <div><label className={labelCls}>상품명</label><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputCls} /></div>
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium mb-1">섹션</label>
-              <select value={form.section} onChange={(e) => setForm({ ...form, section: e.target.value as "megahit" | "recommend" | "best" })}
-                className="w-full px-3 py-2 border rounded-lg text-sm">
-                <option value="megahit">megahit</option>
-                <option value="recommend">recommend</option>
-                <option value="best">best</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">카테고리</label>
-              <input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg text-sm" />
-            </div>
+            <div><label className={labelCls}>섹션</label><select value={form.section} onChange={(e) => setForm({ ...form, section: e.target.value as "megahit" | "recommend" | "best" })} className={inputCls}><option value="megahit">메가히트</option><option value="recommend">추천</option><option value="best">베스트</option></select></div>
+            <div><label className={labelCls}>카테고리</label><input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputCls} /></div>
           </div>
           <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className="block text-sm font-medium mb-1">원가</label>
-              <input type="number" value={form.original_price} onChange={(e) => setForm({ ...form, original_price: Number(e.target.value) })}
-                className="w-full px-3 py-2 border rounded-lg text-sm" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">판매가</label>
-              <input type="number" value={form.sale_price} onChange={(e) => setForm({ ...form, sale_price: Number(e.target.value) })}
-                className="w-full px-3 py-2 border rounded-lg text-sm" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">할인율(%)</label>
-              <input type="number" value={form.discount ?? ""} onChange={(e) => setForm({ ...form, discount: e.target.value ? Number(e.target.value) : null })}
-                className="w-full px-3 py-2 border rounded-lg text-sm" />
-            </div>
+            <div><label className={labelCls}>원가</label><input type="number" value={form.original_price} onChange={(e) => setForm({ ...form, original_price: Number(e.target.value) })} className={inputCls} /></div>
+            <div><label className={labelCls}>판매가</label><input type="number" value={form.sale_price} onChange={(e) => setForm({ ...form, sale_price: Number(e.target.value) })} className={inputCls} /></div>
+            <div><label className={labelCls}>할인율(%)</label><input type="number" value={form.discount ?? ""} onChange={(e) => setForm({ ...form, discount: e.target.value ? Number(e.target.value) : null })} className={inputCls} /></div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium mb-1">평점 (0~5)</label>
-              <input type="number" step="0.1" min="0" max="5" value={form.rating} onChange={(e) => setForm({ ...form, rating: Number(e.target.value) })}
-                className="w-full px-3 py-2 border rounded-lg text-sm" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">정렬 순서</label>
-              <input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })}
-                className="w-full px-3 py-2 border rounded-lg text-sm" />
-            </div>
+            <div><label className={labelCls}>평점 (0~5)</label><input type="number" step="0.1" min="0" max="5" value={form.rating} onChange={(e) => setForm({ ...form, rating: Number(e.target.value) })} className={inputCls} /></div>
+            <div><label className={labelCls}>정렬 순서</label><input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })} className={inputCls} /></div>
           </div>
+          <div><label className={labelCls}>이미지 URL</label><input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} className={inputCls} /></div>
           <div>
-            <label className="block text-sm font-medium mb-1">이미지 URL</label>
-            <input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-sm" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">뱃지</label>
-            <div className="flex gap-1 mb-2 flex-wrap">
-              {form.badges.map((b) => (
-                <span key={b} className="px-2 py-1 bg-gray-100 rounded text-xs flex items-center gap-1">
-                  {b} <button onClick={() => removeBadge(b)} className="text-gray-400 hover:text-red-500">&times;</button>
-                </span>
-              ))}
+            <label className={labelCls}>뱃지</label>
+            <div className="flex gap-1.5 mb-2 flex-wrap">
+              {form.badges.map((b) => (<span key={b} className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-medium">{b}<button onClick={() => removeBadge(b)} className="text-indigo-400 hover:text-red-500">&times;</button></span>))}
             </div>
             <div className="flex gap-2">
-              <input value={badgeInput} onChange={(e) => setBadgeInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addBadge())}
-                placeholder="뱃지 입력 후 Enter" className="flex-1 px-3 py-2 border rounded-lg text-sm" />
-              <button onClick={addBadge} className="px-3 py-2 bg-gray-200 rounded-lg text-sm">추가</button>
+              <input value={badgeInput} onChange={(e) => setBadgeInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addBadge())} placeholder="뱃지 입력 후 Enter" className={`flex-1 ${inputCls}`} />
+              <button onClick={addBadge} className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-medium transition-colors">추가</button>
             </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">설명</label>
-            <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
-              rows={2} className="w-full px-3 py-2 border rounded-lg text-sm" />
-          </div>
-          <div className="flex items-center gap-2">
-            <input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} id="active" />
-            <label htmlFor="active" className="text-sm">활성화</label>
-          </div>
-          <button onClick={handleSave} className="w-full py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">
-            {editing ? "수정" : "추가"}
+          <div><label className={labelCls}>설명</label><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className={`${inputCls} resize-none`} /></div>
+          <label className="flex items-center gap-2.5 cursor-pointer">
+            <div className="relative"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} className="sr-only peer" /><div className="w-9 h-5 bg-gray-200 peer-checked:bg-indigo-500 rounded-full transition-colors" /><div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm peer-checked:translate-x-4 transition-transform" /></div>
+            <span className="text-sm font-medium text-gray-700">활성화</span>
+          </label>
+          <button onClick={handleSave} className="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-bold text-sm hover:shadow-lg hover:shadow-indigo-200 transition-all active:scale-[0.98]">
+            {editing ? "수정하기" : "추가하기"}
           </button>
         </div>
       </Modal>
