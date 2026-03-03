@@ -57,8 +57,6 @@ export default function Header({ categories }: HeaderProps) {
             <p className="flex items-center gap-3">
               <span className="font-semibold">FREE SHIPPING</span>
               <span className="w-px h-3 bg-white/20" />
-              <span className="text-gray-400">5만원 이상 구매 시 무료배송</span>
-              <span className="w-px h-3 bg-white/20" />
               <span className="font-semibold">EASY RETURNS</span>
             </p>
           </div>
