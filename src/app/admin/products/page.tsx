@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Modal from "@/components/admin/Modal";
-import { Product } from "@/lib/types";
+import { Product, Category } from "@/lib/types";
 
 function ImageUploader({ value, onChange }: { value: string; onChange: (url: string) => void }) {
   const [uploading, setUploading] = useState(false);
@@ -80,7 +80,6 @@ const emptyProduct = {
   badges: [] as string[],
   rating: 0,
   category: "",
-  section: "megahit" as "megahit" | "recommend" | "best",
   sort_order: 0,
   is_active: true,
   description: "",
@@ -90,27 +89,35 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [section, setSection] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [categories, setCategories] = useState<Category[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [form, setForm] = useState(emptyProduct);
   const [badgeInput, setBadgeInput] = useState("");
 
+  const fetchCategories = useCallback(async () => {
+    const res = await fetch("/api/admin/categories");
+    const data = await res.json();
+    setCategories(data.data || []);
+  }, []);
+
   const fetchProducts = useCallback(async () => {
     const params = new URLSearchParams({ page: String(page) });
-    if (section) params.set("section", section);
+    if (categoryFilter) params.set("category", categoryFilter);
     const res = await fetch(`/api/admin/products?${params}`);
     const data = await res.json();
     setProducts(data.data || []);
     setTotal(data.total || 0);
-  }, [page, section]);
+  }, [page, categoryFilter]);
 
+  useEffect(() => { fetchCategories(); }, [fetchCategories]);
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
   const openCreate = () => { setEditing(null); setForm(emptyProduct); setBadgeInput(""); setModalOpen(true); };
   const openEdit = (p: Product) => {
     setEditing(p);
-    setForm({ name: p.name, original_price: p.original_price, sale_price: p.sale_price, discount: p.discount, image: p.image, badges: p.badges, rating: p.rating, category: p.category, section: p.section, sort_order: p.sort_order, is_active: p.is_active, description: p.description || "" });
+    setForm({ name: p.name, original_price: p.original_price, sale_price: p.sale_price, discount: p.discount, image: p.image, badges: p.badges, rating: p.rating, category: p.category, sort_order: p.sort_order, is_active: p.is_active, description: p.description || "" });
     setBadgeInput(""); setModalOpen(true);
   };
   const handleSave = async () => {
@@ -123,7 +130,6 @@ export default function ProductsPage() {
   const addBadge = () => { if (badgeInput.trim() && !form.badges.includes(badgeInput.trim())) { setForm({ ...form, badges: [...form.badges, badgeInput.trim()] }); setBadgeInput(""); } };
   const removeBadge = (b: string) => { setForm({ ...form, badges: form.badges.filter((x) => x !== b) }); };
 
-  const sectionLabels: Record<string, string> = { megahit: "메가히트", recommend: "추천", best: "베스트" };
   const inputCls = "w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900/10 transition-all bg-white";
   const labelCls = "block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5";
 
@@ -137,11 +143,15 @@ export default function ProductsPage() {
         </button>
       </div>
 
-      <div className="flex gap-1.5">
-        {[{ value: "", label: "전체" }, { value: "megahit", label: "메가히트" }, { value: "recommend", label: "추천" }, { value: "best", label: "베스트" }].map((s) => (
-          <button key={s.value} onClick={() => { setSection(s.value); setPage(1); }}
-            className={`px-3.5 py-1.5 text-xs rounded-full font-medium transition-all ${section === s.value ? "bg-gray-900 text-white" : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300"}`}>
-            {s.label}
+      <div className="flex gap-1.5 flex-wrap">
+        <button onClick={() => { setCategoryFilter(""); setPage(1); }}
+          className={`px-3.5 py-1.5 text-xs rounded-full font-medium transition-all ${categoryFilter === "" ? "bg-gray-900 text-white" : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300"}`}>
+          전체
+        </button>
+        {categories.filter(c => c.is_active).map((c) => (
+          <button key={c.id} onClick={() => { setCategoryFilter(c.name); setPage(1); }}
+            className={`px-3.5 py-1.5 text-xs rounded-full font-medium transition-all ${categoryFilter === c.name ? "bg-gray-900 text-white" : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300"}`}>
+            {c.name}
           </button>
         ))}
       </div>
@@ -154,7 +164,7 @@ export default function ProductsPage() {
               <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">ID</th>
               <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider w-12">이미지</th>
               <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">상품명</th>
-              <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">섹션</th>
+              <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">카테고리</th>
               <th className="px-4 py-3 text-right text-[11px] font-semibold text-gray-500 uppercase tracking-wider">판매가</th>
               <th className="px-4 py-3 text-center text-[11px] font-semibold text-gray-500 uppercase tracking-wider">상태</th>
               <th className="px-4 py-3 text-center text-[11px] font-semibold text-gray-500 uppercase tracking-wider">관리</th>
@@ -166,7 +176,7 @@ export default function ProductsPage() {
                 <td className="px-4 py-3.5 text-gray-400 font-mono text-xs">#{p.id}</td>
                 <td className="px-4 py-3.5">{p.image && p.image !== "/images/placeholder.svg" ? <img src={p.image} alt="" className="w-10 h-10 object-cover rounded" /> : <div className="w-10 h-10 bg-gray-100 rounded" />}</td>
                 <td className="px-4 py-3.5 font-medium text-gray-900 max-w-xs truncate">{p.name}</td>
-                <td className="px-4 py-3.5"><span className="px-2 py-0.5 rounded-full bg-gray-100 text-[11px] font-medium text-gray-600">{sectionLabels[p.section] || p.section}</span></td>
+                <td className="px-4 py-3.5"><span className="px-2 py-0.5 rounded-full bg-gray-100 text-[11px] font-medium text-gray-600">{p.category || "-"}</span></td>
                 <td className="px-4 py-3.5 text-right font-semibold text-gray-900">{p.sale_price.toLocaleString()}원</td>
                 <td className="px-4 py-3.5 text-center">
                   <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium ${p.is_active ? "text-emerald-600" : "text-gray-400"}`}>
@@ -198,9 +208,16 @@ export default function ProductsPage() {
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "상품 수정" : "상품 추가"}>
         <div className="space-y-4">
           <div><label className={labelCls}>상품명</label><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputCls} /></div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div><label className={labelCls}>섹션</label><select value={form.section} onChange={(e) => setForm({ ...form, section: e.target.value as "megahit" | "recommend" | "best" })} className={inputCls}><option value="megahit">메가히트</option><option value="recommend">추천</option><option value="best">베스트</option></select></div>
-            <div><label className={labelCls}>카테고리</label><input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputCls} /></div>
+          <div>
+            <label className={labelCls}>카테고리</label>
+            <div className="flex gap-2 flex-wrap">
+              {categories.filter(c => c.is_active).map((c) => (
+                <button key={c.id} type="button" onClick={() => setForm({ ...form, category: form.category === c.name ? "" : c.name })}
+                  className={`px-3.5 py-2 text-xs rounded-lg font-medium transition-all ${form.category === c.name ? "bg-gray-900 text-white ring-2 ring-gray-900/20" : "bg-gray-50 text-gray-600 border border-gray-200 hover:border-gray-400"}`}>
+                  {c.name}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div><label className={labelCls}>원가</label><input type="number" value={form.original_price} onChange={(e) => setForm({ ...form, original_price: Number(e.target.value) })} className={inputCls} /></div>

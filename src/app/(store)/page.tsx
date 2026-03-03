@@ -8,43 +8,39 @@ import { Product, Banner, Category } from "@/lib/types";
 export const revalidate = 60;
 
 export default async function Home() {
-  const [
-    { data: megahitProducts },
-    { data: recommendProducts },
-    { data: bestProducts },
-    { data: banners },
-    { data: categories },
-  ] = await Promise.all([
-    supabase.from("products").select("*").eq("section", "megahit").eq("is_active", true).order("sort_order"),
-    supabase.from("products").select("*").eq("section", "recommend").eq("is_active", true).order("sort_order"),
-    supabase.from("products").select("*").eq("section", "best").eq("is_active", true).order("sort_order"),
+  const [{ data: banners }, { data: categories }] = await Promise.all([
     supabase.from("banners").select("*").eq("is_active", true).order("sort_order"),
     supabase.from("categories").select("*").eq("is_active", true).order("sort_order"),
   ]);
 
+  const activeCategories = (categories as Category[]) || [];
+
+  const categoryProducts = await Promise.all(
+    activeCategories.map((cat) =>
+      supabase
+        .from("products")
+        .select("*")
+        .eq("category", cat.name)
+        .eq("is_active", true)
+        .order("sort_order")
+        .limit(8)
+    )
+  );
+
   return (
     <main className="min-h-screen bg-white">
-      <Header categories={(categories as Category[]) || []} />
+      <Header categories={activeCategories} />
       <HeroBanner banners={(banners as Banner[]) || []} />
 
-      <ProductSection
-        title="MEGA HIT"
-        subtitle="지금 가장 핫한 아이템"
-        products={(megahitProducts as Product[]) || []}
-      />
-
-      <ProductSection
-        title="STAFF PICK"
-        subtitle="AJ24 스태프가 추천하는 아이템"
-        products={(recommendProducts as Product[]) || []}
-        bgColor="bg-[#fafafa]"
-      />
-
-      <ProductSection
-        title="BEST SELLERS"
-        subtitle="가장 많이 사랑받는 아이템"
-        products={(bestProducts as Product[]) || []}
-      />
+      {activeCategories.map((cat, i) => (
+        <ProductSection
+          key={cat.id}
+          title={cat.name}
+          products={(categoryProducts[i]?.data as Product[]) || []}
+          bgColor={i % 2 === 1 ? "bg-[#fafafa]" : "bg-white"}
+          linkHref={`/category/${cat.slug || cat.id}`}
+        />
+      ))}
 
       <Footer />
     </main>

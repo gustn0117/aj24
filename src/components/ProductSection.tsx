@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Product } from "@/lib/types";
 import ProductCard from "./ProductCard";
 
@@ -8,6 +9,7 @@ interface ProductSectionProps {
   subtitle?: string;
   products: Product[];
   bgColor?: string;
+  linkHref?: string;
 }
 
 export default function ProductSection({
@@ -15,7 +17,10 @@ export default function ProductSection({
   subtitle,
   products,
   bgColor = "bg-white",
+  linkHref,
 }: ProductSectionProps) {
+  if (products.length === 0) return null;
+
   return (
     <section className={`py-16 md:py-24 ${bgColor}`}>
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
@@ -34,13 +39,15 @@ export default function ProductSection({
               <p className="text-sm text-gray-400 leading-relaxed">{subtitle}</p>
             )}
           </div>
-          <button className="group inline-flex items-center gap-2 px-5 py-2.5 border border-gray-200 rounded-full text-[12px] font-bold text-gray-500 hover:text-black hover:border-gray-400 transition-all shrink-0">
-            전체보기
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="group-hover:translate-x-0.5 transition-transform">
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
-          </button>
+          {linkHref && (
+            <Link href={linkHref} className="group inline-flex items-center gap-2 px-5 py-2.5 border border-gray-200 rounded-full text-[12px] font-bold text-gray-500 hover:text-black hover:border-gray-400 transition-all shrink-0">
+              전체보기
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="group-hover:translate-x-0.5 transition-transform">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </Link>
+          )}
         </div>
 
         {/* Product Grid */}

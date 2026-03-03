@@ -8,12 +8,12 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const section = searchParams.get("section");
+  const category = searchParams.get("category");
   const page = parseInt(searchParams.get("page") || "1");
   const limit = 20;
 
   let query = supabaseAdmin.from("products").select("*", { count: "exact" });
-  if (section) query = query.eq("section", section);
+  if (category) query = query.eq("category", category);
   query = query.order("sort_order").range((page - 1) * limit, page * limit - 1);
 
   const { data, count, error } = await query;

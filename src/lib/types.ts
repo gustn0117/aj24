@@ -8,7 +8,6 @@ export interface Product {
   badges: string[];
   rating: number;
   category: string;
-  section: "megahit" | "recommend" | "best";
   sort_order: number;
   is_active: boolean;
   description: string | null;
