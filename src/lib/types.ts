@@ -1,0 +1,75 @@
+export interface Product {
+  id: number;
+  name: string;
+  original_price: number;
+  sale_price: number;
+  discount: number | null;
+  image: string;
+  badges: string[];
+  rating: number;
+  category: string;
+  section: "megahit" | "recommend" | "best";
+  sort_order: number;
+  is_active: boolean;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Banner {
+  id: number;
+  title: string;
+  subtitle: string | null;
+  bg_gradient: string;
+  link_url: string | null;
+  image_url: string | null;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  slug: string | null;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Member {
+  id: number;
+  email: string;
+  name: string;
+  phone: string | null;
+  address: string | null;
+  status: "active" | "inactive" | "banned";
+  memo: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Order {
+  id: number;
+  member_id: number | null;
+  member_name: string;
+  member_email: string | null;
+  status: "pending" | "confirmed" | "shipping" | "delivered" | "cancelled" | "refunded";
+  total_amount: number;
+  shipping_address: string | null;
+  memo: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface OrderItem {
+  id: number;
+  order_id: number;
+  product_id: number | null;
+  product_name: string;
+  quantity: number;
+  unit_price: number;
+  created_at: string;
+}

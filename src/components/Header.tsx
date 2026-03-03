@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { navCategories } from "@/data/products";
+import { Category } from "@/lib/types";
 
-export default function Header() {
+interface HeaderProps {
+  categories: Category[];
+}
+
+export default function Header({ categories }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -22,13 +26,13 @@ export default function Header() {
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-6 ml-8">
-          {navCategories.map((cat) => (
+          {categories.map((cat) => (
             <a
-              key={cat}
+              key={cat.id}
               href="#"
               className="text-sm text-gray-700 hover:text-black whitespace-nowrap transition-colors font-medium"
             >
-              {cat}
+              {cat.name}
             </a>
           ))}
         </nav>
@@ -78,13 +82,13 @@ export default function Header() {
       {/* Mobile Nav */}
       {menuOpen && (
         <nav className="lg:hidden border-t border-gray-100 bg-white px-4 py-3 flex flex-wrap gap-2">
-          {navCategories.map((cat) => (
+          {categories.map((cat) => (
             <a
-              key={cat}
+              key={cat.id}
               href="#"
               className="text-sm text-gray-700 hover:text-black px-3 py-1.5 rounded-full bg-gray-50 hover:bg-gray-100 transition-colors"
             >
-              {cat}
+              {cat.name}
             </a>
           ))}
         </nav>

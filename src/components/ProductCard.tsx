@@ -1,6 +1,6 @@
 "use client";
 
-import { Product } from "@/data/products";
+import { Product } from "@/lib/types";
 
 function getBadgeClass(badge: string) {
   switch (badge) {
@@ -76,14 +76,14 @@ export default function ProductCard({ product }: { product: Product }) {
 
         {/* Pricing */}
         <div className="mb-3">
-          {product.originalPrice !== product.salePrice && (
+          {product.original_price !== product.sale_price && (
             <p className="text-xs text-gray-400 line-through">
-              {formatPrice(product.originalPrice)}
+              {formatPrice(product.original_price)}
             </p>
           )}
           <div className="flex items-center gap-2">
             <p className="text-lg font-bold text-gray-900">
-              {formatPrice(product.salePrice)}
+              {formatPrice(product.sale_price)}
             </p>
             {product.discount && (
               <span className="text-lg font-bold text-red-500">
