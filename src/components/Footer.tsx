@@ -17,44 +17,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Newsletter section */}
-      <div className="border-b border-gray-800/50">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-14 md:py-20">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 p-8 md:p-12">
-            {/* Decorative elements */}
-            <div className="absolute -top-20 -right-20 w-60 h-60 bg-white/[0.02] rounded-full blur-2xl" />
-            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-white/[0.02] rounded-full blur-2xl" />
-
-            <div className="relative flex flex-col md:flex-row items-center justify-between gap-8">
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 border border-gray-700 rounded-full text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">
-                  <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                  Newsletter
-                </div>
-                <h3 className="text-white text-2xl md:text-3xl font-black mb-2 tracking-tight">
-                  뉴스레터 구독
-                </h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  최신 할인 정보와 신상품 소식을 가장 먼저 받아보세요.
-                </p>
-              </div>
-              <div className="flex w-full md:w-auto">
-                <div className="relative flex w-full md:w-auto">
-                  <input
-                    type="email"
-                    placeholder="이메일 주소 입력"
-                    className="w-full md:w-80 px-5 py-3.5 bg-gray-950/60 border border-gray-700 rounded-l-full text-sm text-white placeholder-gray-600 focus:outline-none focus:border-gray-500 transition-colors"
-                  />
-                  <button className="px-7 py-3.5 bg-white text-gray-900 rounded-r-full text-sm font-bold hover:bg-gray-100 transition-all active:scale-95 whitespace-nowrap">
-                    구독하기
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Main footer */}
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-12 md:py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
