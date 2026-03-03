@@ -32,31 +32,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setMember(data);
-      return { ok: true };
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMember(data);
+        return { ok: true };
+      }
+      return { ok: false, error: data.error || "로그인에 실패했습니다." };
+    } catch {
+      return { ok: false, error: "네트워크 오류가 발생했습니다." };
     }
-    return { ok: false, error: data.error || "로그인에 실패했습니다." };
   }, []);
 
   const register = useCallback(async (info: { name: string; email: string; password: string; phone?: string }) => {
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(info),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setMember(data);
-      return { ok: true };
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(info),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMember(data);
+        return { ok: true };
+      }
+      return { ok: false, error: data.error || "회원가입에 실패했습니다." };
+    } catch {
+      return { ok: false, error: "네트워크 오류가 발생했습니다." };
     }
-    return { ok: false, error: data.error || "회원가입에 실패했습니다." };
   }, []);
 
   const logout = useCallback(async () => {

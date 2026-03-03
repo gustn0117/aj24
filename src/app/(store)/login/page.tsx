@@ -16,12 +16,17 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const result = await login(email, password);
-    setLoading(false);
-    if (result.ok) {
-      router.push("/");
-    } else {
-      setError(result.error || "로그인에 실패했습니다.");
+    try {
+      const result = await login(email, password);
+      if (result.ok) {
+        router.push("/");
+      } else {
+        setError(result.error || "로그인에 실패했습니다.");
+      }
+    } catch {
+      setError("네트워크 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
     }
   }
 

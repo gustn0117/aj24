@@ -27,12 +27,17 @@ export default function RegisterPage() {
       return;
     }
     setLoading(true);
-    const result = await register({ name: form.name, email: form.email, password: form.password, phone: form.phone || undefined });
-    setLoading(false);
-    if (result.ok) {
-      router.push("/");
-    } else {
-      setError(result.error || "회원가입에 실패했습니다.");
+    try {
+      const result = await register({ name: form.name, email: form.email, password: form.password, phone: form.phone || undefined });
+      if (result.ok) {
+        router.push("/");
+      } else {
+        setError(result.error || "회원가입에 실패했습니다.");
+      }
+    } catch {
+      setError("네트워크 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
     }
   }
 
