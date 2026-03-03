@@ -33,7 +33,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-5">
-              <img src="/images/로고.png" alt="AJ24" className="h-8 w-auto brightness-0 invert" />
+              <img src="/images/logo.png" alt="AJ24" className="h-8 w-auto brightness-0 invert" />
               <span className="text-white font-extrabold text-lg">AJ24</span>
             </div>
             <p className="text-sm leading-relaxed text-gray-500 mb-5">

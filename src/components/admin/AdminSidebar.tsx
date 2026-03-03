@@ -20,7 +20,7 @@ export default function AdminSidebar() {
       {/* Logo */}
       <div className="p-5 pb-4">
         <Link href="/admin" className="flex items-center gap-2.5">
-          <img src="/images/로고.png" alt="AJ24" className="h-8 w-auto brightness-0 invert" />
+          <img src="/images/logo.png" alt="AJ24" className="h-8 w-auto brightness-0 invert" />
           <div>
             <span className="text-white font-bold text-sm block leading-tight">AJ24</span>
             <span className="text-gray-500 text-[10px] font-medium">Admin Panel</span>
