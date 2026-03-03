@@ -29,16 +29,6 @@ export default function ProductCard({ product }: { product: Product }) {
     <div className="group cursor-pointer">
       {/* Image */}
       <div className="relative aspect-[3/4] bg-[#f5f5f5] rounded-lg overflow-hidden mb-3">
-        <div className="w-full h-full flex items-center justify-center img-zoom">
-          <div className="w-20 h-20 bg-[#eaeaea] rounded-xl flex items-center justify-center text-[#ccc]">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.8">
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <circle cx="8.5" cy="8.5" r="1.5" />
-              <polyline points="21 15 16 10 5 21" />
-            </svg>
-          </div>
-        </div>
-
         {/* Badges */}
         {product.badges.length > 0 && (
           <div className="absolute top-2 left-2 flex flex-col gap-1">
