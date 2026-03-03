@@ -85,6 +85,18 @@ export interface OrderItem {
   created_at: string;
 }
 
+export interface Review {
+  id: number;
+  product_id: number;
+  member_id: number | null;
+  author_name: string;
+  rating: number;
+  content: string;
+  is_admin_created: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Wishlist {
   id: number;
   member_id: number;

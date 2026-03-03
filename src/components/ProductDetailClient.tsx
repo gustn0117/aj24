@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Product } from "@/lib/types";
+import { Product, Review } from "@/lib/types";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
+import { useAuth } from "@/contexts/AuthContext";
 import ProductCard from "./ProductCard";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -12,15 +13,75 @@ function formatPrice(price: number) {
   return price.toLocaleString("ko-KR") + "원";
 }
 
-export default function ProductDetailClient({ product, relatedProducts }: { product: Product; relatedProducts: Product[] }) {
+function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
+  return (
+    <div className="flex items-center gap-px">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <svg key={star} width={size} height={size} viewBox="0 0 24 24" fill={star <= Math.round(rating) ? "#000" : "none"} stroke={star <= Math.round(rating) ? "#000" : "#ddd"} strokeWidth="1.5">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      ))}
+    </div>
+  );
+}
+
+function StarSelector({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  return (
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((s) => (
+        <button key={s} type="button" onClick={() => onChange(s)} className="p-0.5">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill={s <= value ? "#000" : "none"} stroke={s <= value ? "#000" : "#ccc"} strokeWidth="1.5" className="transition-colors">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export default function ProductDetailClient({ product, relatedProducts, reviews: initialReviews }: { product: Product; relatedProducts: Product[]; reviews: Review[] }) {
   const { addItem } = useCart();
   const { isWishlisted, toggleWishlist } = useWishlist();
+  const { member } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const wishlisted = isWishlisted(product.id);
+
+  const [reviews, setReviews] = useState<Review[]>(initialReviews);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, content: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [reviewError, setReviewError] = useState("");
 
   const discountPercent = product.original_price > product.sale_price
     ? Math.round((1 - product.sale_price / product.original_price) * 100)
     : 0;
+
+  const avgRating = reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    : 0;
+
+  async function handleSubmitReview() {
+    if (!reviewForm.content.trim()) { setReviewError("리뷰 내용을 입력해주세요."); return; }
+    setSubmitting(true);
+    setReviewError("");
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id, rating: reviewForm.rating, content: reviewForm.content }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setReviews([data, ...reviews]);
+        setReviewForm({ rating: 5, content: "" });
+      } else {
+        setReviewError(data.error || "리뷰 작성에 실패했습니다.");
+      }
+    } catch {
+      setReviewError("네트워크 오류가 발생했습니다.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-white">
@@ -45,14 +106,8 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
 
             {/* Rating */}
             <div className="flex items-center gap-2 mb-6">
-              <div className="flex items-center gap-px">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <svg key={star} width="16" height="16" viewBox="0 0 24 24" fill={star <= Math.round(product.rating) ? "#000" : "none"} stroke={star <= Math.round(product.rating) ? "#000" : "#ddd"} strokeWidth="1.5">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                  </svg>
-                ))}
-              </div>
-              <span className="text-sm text-gray-400">({Math.floor(product.rating * 47)}개 리뷰)</span>
+              <StarRating rating={avgRating || product.rating} />
+              <span className="text-sm text-gray-400">({reviews.length}개 리뷰)</span>
             </div>
 
             {/* Badges */}
@@ -111,6 +166,74 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
               </button>
             </div>
           </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="mt-20">
+          <div className="flex items-center gap-3 mb-8">
+            <h2 className="text-xl font-black tracking-tight">리뷰</h2>
+            <span className="text-sm text-gray-400">({reviews.length})</span>
+            {reviews.length > 0 && (
+              <div className="flex items-center gap-1.5 ml-2">
+                <StarRating rating={avgRating} size={14} />
+                <span className="text-sm font-semibold">{avgRating.toFixed(1)}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Review Write Form */}
+          {member ? (
+            <div className="bg-[#fafafa] rounded-xl p-5 sm:p-6 mb-8">
+              <p className="text-sm font-semibold mb-3">리뷰 작성</p>
+              <div className="mb-3">
+                <StarSelector value={reviewForm.rating} onChange={(v) => setReviewForm({ ...reviewForm, rating: v })} />
+              </div>
+              <textarea
+                value={reviewForm.content}
+                onChange={(e) => setReviewForm({ ...reviewForm, content: e.target.value })}
+                placeholder="상품에 대한 솔직한 리뷰를 작성해주세요."
+                rows={3}
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-black resize-none bg-white"
+              />
+              {reviewError && <p className="text-xs text-red-500 mt-1">{reviewError}</p>}
+              <button
+                onClick={handleSubmitReview}
+                disabled={submitting}
+                className="mt-3 px-6 py-2.5 bg-black text-white text-sm font-bold rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
+              >
+                {submitting ? "등록 중..." : "리뷰 등록"}
+              </button>
+            </div>
+          ) : (
+            <div className="bg-[#fafafa] rounded-xl p-5 mb-8 text-center">
+              <p className="text-sm text-gray-500">로그인 후 리뷰를 작성할 수 있습니다.</p>
+            </div>
+          )}
+
+          {/* Review List */}
+          {reviews.length > 0 ? (
+            <div className="space-y-0 divide-y divide-gray-100">
+              {reviews.map((review) => (
+                <div key={review.id} className="py-5 first:pt-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">
+                      {review.author_name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{review.author_name}</p>
+                      <div className="flex items-center gap-2">
+                        <StarRating rating={review.rating} size={12} />
+                        <span className="text-[11px] text-gray-400">{new Date(review.created_at).toLocaleDateString("ko-KR")}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 leading-relaxed ml-11">{review.content}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400 text-center py-8">아직 리뷰가 없습니다.</p>
+          )}
         </div>
 
         {/* Related Products */}
