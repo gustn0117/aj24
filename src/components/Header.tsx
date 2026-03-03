@@ -18,10 +18,7 @@ export default function Header({ categories }: HeaderProps) {
           <div className="w-8 h-8 rounded-full border-2 border-gray-800 flex items-center justify-center">
             <div className="w-2 h-2 bg-red-500 rounded-full" />
           </div>
-          <span className="text-lg font-bold tracking-tight">
-            <span className="text-gray-400">온</span>
-            <span className="text-gray-900">오프마켓</span>
-          </span>
+          <span className="text-lg font-bold tracking-tight text-gray-900">AJ24</span>
         </div>
 
         {/* Desktop Nav */}

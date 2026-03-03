@@ -36,7 +36,7 @@ export default function AdminLogin() {
             <div className="w-3 h-3 bg-red-500 rounded-full" />
           </div>
           <h1 className="text-xl font-bold">관리자 로그인</h1>
-          <p className="text-sm text-gray-500 mt-1">온오프마켓 어드민</p>
+          <p className="text-sm text-gray-500 mt-1">AJ24 어드민</p>
         </div>
 
         {error && (

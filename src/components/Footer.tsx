@@ -9,14 +9,12 @@ export default function Footer() {
               <div className="w-7 h-7 rounded-full border-2 border-gray-500 flex items-center justify-center">
                 <div className="w-1.5 h-1.5 bg-red-500 rounded-full" />
               </div>
-              <span className="text-white font-bold text-lg">
-                <span className="text-gray-500">온</span>오프마켓
-              </span>
+              <span className="text-white font-bold text-lg">AJ24</span>
             </div>
             <p className="text-sm leading-relaxed">
               최고의 제품을 최저가로 만나보세요.
               <br />
-              온오프마켓에서 특별한 쇼핑을 경험하세요.
+              AJ24에서 특별한 쇼핑을 경험하세요.
             </p>
           </div>
 
@@ -43,14 +41,14 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-3 text-sm">연락처</h4>
             <ul className="space-y-2 text-sm">
               <li>전화: 1588-0000</li>
-              <li>이메일: help@onoffmarket.com</li>
+              <li>이메일: help@aj24.co.kr</li>
               <li>운영시간: 평일 09:00 - 18:00</li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-800 pt-6 text-center text-xs text-gray-500">
-          &copy; 2026 온오프마켓. All rights reserved.
+          &copy; 2026 AJ24. All rights reserved.
         </div>
       </div>
     </footer>

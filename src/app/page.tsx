@@ -58,7 +58,7 @@ export default async function Home() {
 
       <ProductSection
         title="RECOMMEND GOODS"
-        subtitle="온오프마켓이 추천하는 인기 상품"
+        subtitle="AJ24가 추천하는 인기 상품"
         products={(recommendProducts as Product[]) || []}
         bgColor="bg-gray-50"
       />

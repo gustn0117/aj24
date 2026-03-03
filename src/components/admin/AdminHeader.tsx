@@ -12,7 +12,7 @@ export default function AdminHeader() {
 
   return (
     <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-6">
-      <h2 className="text-sm font-medium text-gray-600">온오프마켓 관리자</h2>
+      <h2 className="text-sm font-medium text-gray-600">AJ24 관리자</h2>
       <button
         onClick={handleLogout}
         className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
