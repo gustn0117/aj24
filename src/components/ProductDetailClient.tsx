@@ -1,0 +1,133 @@
+"use client";
+
+import { useState } from "react";
+import { Product } from "@/lib/types";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
+import ProductCard from "./ProductCard";
+import Header from "./Header";
+import Footer from "./Footer";
+
+function formatPrice(price: number) {
+  return price.toLocaleString("ko-KR") + "원";
+}
+
+export default function ProductDetailClient({ product, relatedProducts }: { product: Product; relatedProducts: Product[] }) {
+  const { addItem } = useCart();
+  const { isWishlisted, toggleWishlist } = useWishlist();
+  const [quantity, setQuantity] = useState(1);
+  const wishlisted = isWishlisted(product.id);
+
+  const discountPercent = product.discount || (
+    product.original_price > product.sale_price
+      ? Math.round((1 - product.sale_price / product.original_price) * 100)
+      : 0
+  );
+
+  return (
+    <main className="min-h-screen bg-white">
+      <Header categories={[]} />
+
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-8 md:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
+          {/* Image */}
+          <div className="aspect-[3/4] bg-[#f5f5f5] rounded-2xl" />
+
+          {/* Info */}
+          <div className="flex flex-col">
+            {product.category && (
+              <p className="text-xs text-gray-400 tracking-wider font-medium mb-2 uppercase">{product.category}</p>
+            )}
+
+            <h1 className="text-2xl md:text-3xl font-black text-black tracking-tight mb-4">{product.name}</h1>
+
+            {/* Rating */}
+            <div className="flex items-center gap-2 mb-6">
+              <div className="flex items-center gap-px">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <svg key={star} width="16" height="16" viewBox="0 0 24 24" fill={star <= Math.round(product.rating) ? "#000" : "none"} stroke={star <= Math.round(product.rating) ? "#000" : "#ddd"} strokeWidth="1.5">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                ))}
+              </div>
+              <span className="text-sm text-gray-400">({Math.floor(product.rating * 47)}개 리뷰)</span>
+            </div>
+
+            {/* Badges */}
+            {product.badges.length > 0 && (
+              <div className="flex gap-1.5 mb-6">
+                {product.badges.map((badge, i) => (
+                  <span key={i} className="inline-block px-2.5 py-1 text-[10px] font-bold text-white rounded bg-black uppercase tracking-wider">{badge}</span>
+                ))}
+              </div>
+            )}
+
+            {/* Price */}
+            <div className="border-t border-b border-gray-100 py-6 mb-6">
+              <div className="flex items-baseline gap-3">
+                {discountPercent > 0 && (
+                  <span className="text-2xl font-black text-red-500">{discountPercent}%</span>
+                )}
+                <span className="text-3xl font-black text-black">{formatPrice(product.sale_price)}</span>
+              </div>
+              {product.original_price !== product.sale_price && (
+                <p className="text-sm text-gray-400 line-through mt-1">{formatPrice(product.original_price)}</p>
+              )}
+              {product.sale_price >= 50000 && (
+                <p className="text-xs text-green-600 font-semibold mt-2">무료배송</p>
+              )}
+            </div>
+
+            {/* Description */}
+            {product.description && (
+              <p className="text-sm text-gray-500 leading-relaxed mb-6">{product.description}</p>
+            )}
+
+            {/* Quantity */}
+            <div className="flex items-center gap-4 mb-6">
+              <span className="text-sm font-semibold text-gray-700">수량</span>
+              <div className="flex items-center border border-gray-200 rounded-lg">
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-black transition-colors">−</button>
+                <span className="w-10 text-center text-sm font-bold">{quantity}</span>
+                <button onClick={() => setQuantity(quantity + 1)} className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-black transition-colors">+</button>
+              </div>
+              <span className="text-sm text-gray-400 ml-auto">{formatPrice(product.sale_price * quantity)}</span>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 mt-auto">
+              <button
+                onClick={() => addItem(product, quantity)}
+                className="flex-1 py-4 bg-black text-white font-bold rounded-xl text-sm hover:bg-gray-800 transition-colors active:scale-[0.98]"
+              >
+                장바구니 담기
+              </button>
+              <button
+                onClick={() => toggleWishlist(product.id)}
+                className={`w-14 h-14 rounded-xl border flex items-center justify-center transition-colors ${wishlisted ? "bg-red-50 border-red-200 text-red-500" : "border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200"}`}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill={wishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Related Products */}
+        {relatedProducts.length > 0 && (
+          <div className="mt-20">
+            <h2 className="text-xl font-black tracking-tight mb-8">관련 상품</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-6">
+              {relatedProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <Footer />
+    </main>
+  );
+}

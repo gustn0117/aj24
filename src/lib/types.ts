@@ -47,8 +47,19 @@ export interface Member {
   address: string | null;
   status: "active" | "inactive" | "banned";
   memo: string | null;
+  password_hash?: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface MemberPublic {
+  id: number;
+  email: string;
+  name: string;
+  phone: string | null;
+  address: string | null;
+  status: string;
+  created_at: string;
 }
 
 export interface Order {
@@ -59,6 +70,8 @@ export interface Order {
   status: "pending" | "confirmed" | "shipping" | "delivered" | "cancelled" | "refunded";
   total_amount: number;
   shipping_address: string | null;
+  shipping_name: string | null;
+  shipping_phone: string | null;
   memo: string | null;
   created_at: string;
   updated_at: string;
@@ -72,4 +85,20 @@ export interface OrderItem {
   quantity: number;
   unit_price: number;
   created_at: string;
+}
+
+export interface Wishlist {
+  id: number;
+  member_id: number;
+  product_id: number;
+  created_at: string;
+}
+
+export interface CartItem {
+  productId: number;
+  name: string;
+  sale_price: number;
+  original_price: number;
+  image: string;
+  quantity: number;
 }
