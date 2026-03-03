@@ -14,7 +14,6 @@ export default function CartDrawer() {
   if (!isCartOpen) return null;
 
   const total = getTotal();
-  const shippingFree = total >= 50000;
 
   return (
     <div className="fixed inset-0 z-[60] animate-fade-in">
@@ -72,21 +71,10 @@ export default function CartDrawer() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-gray-100 p-5 space-y-3">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-500">배송비</span>
-              <span className={`font-semibold ${shippingFree ? "text-green-600" : "text-gray-800"}`}>
-                {shippingFree ? "무료" : "3,000원"}
-              </span>
-            </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-bold text-black">합계</span>
-              <span className="text-lg font-black text-black">{formatPrice(total + (shippingFree ? 0 : 3000))}</span>
+              <span className="text-lg font-black text-black">{formatPrice(total)}</span>
             </div>
-            {!shippingFree && (
-              <p className="text-[11px] text-gray-400 text-center">
-                {formatPrice(50000 - total)} 더 구매하면 무료배송!
-              </p>
-            )}
             <a
               href={member ? "/checkout" : "/login"}
               className="block w-full py-3.5 bg-black text-white font-bold rounded-lg text-sm text-center hover:bg-gray-800 transition-colors active:scale-[0.98]"

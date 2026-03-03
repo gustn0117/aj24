@@ -77,9 +77,6 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
               {product.original_price !== product.sale_price && (
                 <p className="text-sm text-gray-400 line-through mt-1">{formatPrice(product.original_price)}</p>
               )}
-              {product.sale_price >= 50000 && (
-                <p className="text-xs text-green-600 font-semibold mt-2">무료배송</p>
-              )}
             </div>
 
             {/* Description */}

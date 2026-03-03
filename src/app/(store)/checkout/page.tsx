@@ -34,7 +34,6 @@ export default function CheckoutPage() {
   }, [items.length, router]);
 
   const total = getTotal();
-  const shippingFee = total >= 50000 ? 0 : 3000;
 
   async function handleOrder() {
     if (!form.name || !form.phone || !form.address) {
@@ -116,13 +115,11 @@ export default function CheckoutPage() {
                   </div>
                 ))}
               </div>
-              <div className="border-t border-gray-100 pt-4 space-y-2">
-                <div className="flex justify-between text-sm"><span className="text-gray-500">상품 합계</span><span>{formatPrice(total)}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-gray-500">배송비</span><span className={shippingFee === 0 ? "text-green-600 font-semibold" : ""}>{shippingFee === 0 ? "무료" : formatPrice(shippingFee)}</span></div>
-                <div className="flex justify-between text-lg font-black pt-2 border-t border-gray-100"><span>총 결제 금액</span><span>{formatPrice(total + shippingFee)}</span></div>
+              <div className="border-t border-gray-100 pt-4">
+                <div className="flex justify-between text-lg font-black"><span>총 결제 금액</span><span>{formatPrice(total)}</span></div>
               </div>
               <button onClick={handleOrder} disabled={loading} className="w-full mt-6 py-4 bg-black text-white font-bold rounded-xl text-sm hover:bg-gray-800 transition-colors disabled:opacity-50 active:scale-[0.98]">
-                {loading ? "주문 처리 중..." : `${formatPrice(total + shippingFee)} 결제하기`}
+                {loading ? "주문 처리 중..." : `${formatPrice(total)} 결제하기`}
               </button>
             </div>
           </div>
