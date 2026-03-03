@@ -27,10 +27,8 @@ export default function Header({ categories }: HeaderProps) {
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2.5 shrink-0 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md shadow-indigo-200 group-hover:shadow-indigo-300 transition-shadow">
-            <span className="text-white font-black text-sm">AJ</span>
-          </div>
+        <a href="/" className="flex items-center gap-2 shrink-0 group">
+          <img src="/images/로고.png" alt="AJ24" className="h-9 w-auto" />
           <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
             AJ24
           </span>

@@ -32,10 +32,8 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2.5 mb-5">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                <span className="text-white font-black text-xs">AJ</span>
-              </div>
+            <div className="flex items-center gap-2 mb-5">
+              <img src="/images/로고.png" alt="AJ24" className="h-8 w-auto brightness-0 invert" />
               <span className="text-white font-extrabold text-lg">AJ24</span>
             </div>
             <p className="text-sm leading-relaxed text-gray-500 mb-5">

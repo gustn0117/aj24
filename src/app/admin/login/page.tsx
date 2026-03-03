@@ -38,9 +38,7 @@ export default function AdminLogin() {
 
       <form onSubmit={handleSubmit} className="relative bg-white/5 backdrop-blur-2xl border border-white/10 p-8 rounded-3xl shadow-2xl w-full max-w-sm mx-4">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/30">
-            <span className="text-white font-black text-xl">AJ</span>
-          </div>
+          <img src="/images/로고.png" alt="AJ24" className="h-16 w-auto mx-auto mb-4 brightness-0 invert" />
           <h1 className="text-2xl font-bold text-white">관리자 로그인</h1>
           <p className="text-sm text-gray-400 mt-1.5">AJ24 Admin Panel</p>
         </div>
