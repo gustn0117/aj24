@@ -10,14 +10,16 @@ interface HeroBannerProps {
 export default function HeroBanner({ banners }: HeroBannerProps) {
   const [current, setCurrent] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [progressKey, setProgressKey] = useState(0);
 
   const goTo = useCallback((idx: number) => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setTimeout(() => {
       setCurrent(idx);
+      setProgressKey((k) => k + 1);
       setTimeout(() => setIsTransitioning(false), 50);
-    }, 300);
+    }, 400);
   }, [isTransitioning]);
 
   useEffect(() => {
@@ -31,87 +33,110 @@ export default function HeroBanner({ banners }: HeroBannerProps) {
   if (banners.length === 0) return null;
 
   return (
-    <section className="relative overflow-hidden">
-      <div
-        className={`bg-gradient-to-br ${banners[current].bg_gradient} transition-all duration-700 py-24 md:py-32 lg:py-40 relative`}
-      >
-        {/* Decorative elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-black/5 rounded-full blur-3xl" />
-          <div className="absolute top-1/4 right-1/4 w-px h-40 bg-white/10 rotate-45" />
-          <div className="absolute bottom-1/4 left-1/3 w-px h-32 bg-white/10 -rotate-45" />
-        </div>
+    <section className="relative overflow-hidden bg-black">
+      {/* Background gradient */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${banners[current].bg_gradient} transition-all duration-1000`} />
 
-        <div
-          className={`max-w-[1400px] mx-auto px-4 sm:px-6 text-white relative z-10 transition-all duration-300 ${
-            isTransitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
-          }`}
-        >
-          <div className="max-w-2xl">
-            <p className="text-xs sm:text-sm uppercase tracking-[0.25em] text-white/60 font-medium mb-4">
-              AJ24 Collection
-            </p>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-5 leading-[1.05]">
-              {banners[current].title}
-            </h1>
-            <p className="text-base sm:text-lg opacity-70 leading-relaxed mb-10 max-w-lg">
-              {banners[current].subtitle}
-            </p>
-            <div className="flex items-center gap-3">
-              <button className="px-8 py-3.5 bg-white text-gray-900 font-bold rounded-full hover:bg-gray-100 transition-all shadow-xl shadow-black/10 active:scale-95 text-sm tracking-wide">
-                SHOP NOW
-              </button>
-              <button className="px-8 py-3.5 border border-white/30 text-white font-bold rounded-full hover:bg-white/10 transition-all text-sm tracking-wide">
-                VIEW MORE
-              </button>
+      {/* Noise overlay */}
+      <div className="absolute inset-0 noise-bg" />
+
+      {/* Decorative grid */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-[20%] w-px h-full bg-white/[0.04]" />
+        <div className="absolute top-0 left-[40%] w-px h-full bg-white/[0.04]" />
+        <div className="absolute top-0 left-[60%] w-px h-full bg-white/[0.04]" />
+        <div className="absolute top-0 left-[80%] w-px h-full bg-white/[0.04]" />
+        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-white/[0.03] rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] bg-black/10 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative z-10 min-h-[480px] md:min-h-[580px] lg:min-h-[640px] flex items-center">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 w-full py-16 md:py-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            {/* Left content */}
+            <div className={`transition-all duration-500 ${isTransitioning ? "opacity-0 translate-y-6" : "opacity-100 translate-y-0"}`}>
+              <div className="inline-flex items-center gap-2 px-3 py-1 border border-white/15 rounded-full text-[11px] font-medium text-white/70 mb-6 backdrop-blur-sm">
+                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                AJ24 Collection
+              </div>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.02] mb-6">
+                {banners[current].title}
+              </h1>
+              <p className="text-base sm:text-lg text-white/50 leading-relaxed mb-10 max-w-md">
+                {banners[current].subtitle}
+              </p>
+              <div className="flex items-center gap-3">
+                <button className="group px-8 py-4 bg-white text-black font-bold rounded-full hover:bg-white/90 transition-all active:scale-95 text-sm tracking-wide inline-flex items-center gap-2">
+                  SHOP NOW
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="group-hover:translate-x-1 transition-transform">
+                    <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </button>
+                <button className="px-8 py-4 border border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition-all text-sm tracking-wide backdrop-blur-sm">
+                  VIEW MORE
+                </button>
+              </div>
+            </div>
+
+            {/* Right: Slide counter (desktop) */}
+            <div className="hidden lg:flex flex-col items-end justify-end h-full">
+              <div className="text-right">
+                <span className="text-8xl font-black text-white/10 leading-none block">
+                  {String(current + 1).padStart(2, "0")}
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-8 sm:bottom-8 flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          {banners.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goTo(i)}
-              className={`rounded-full transition-all duration-500 ${
-                i === current
-                  ? "bg-white w-8 h-2"
-                  : "bg-white/30 w-2 h-2 hover:bg-white/60"
-              }`}
-            />
-          ))}
+      {/* Bottom bar */}
+      <div className="absolute bottom-0 left-0 right-0 z-20">
+        {/* Progress bar */}
+        <div className="h-0.5 bg-white/10">
+          <div key={progressKey} className="h-full bg-white/60 banner-progress" />
         </div>
-        {banners.length > 1 && (
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => goTo((current - 1 + banners.length) % banners.length)}
-              className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-            </button>
-            <button
-              onClick={() => goTo((current + 1) % banners.length)}
-              className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </button>
-          </div>
-        )}
-      </div>
 
-      {/* Slide counter */}
-      <div className="absolute top-8 right-8 text-white/40 text-xs font-mono hidden sm:block">
-        <span className="text-white font-bold text-sm">{String(current + 1).padStart(2, "0")}</span>
-        <span className="mx-1">/</span>
-        <span>{String(banners.length).padStart(2, "0")}</span>
+        {/* Navigation */}
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between py-4">
+            <div className="flex items-center gap-3">
+              {banners.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  className={`transition-all duration-500 ${
+                    i === current
+                      ? "text-white text-sm font-bold"
+                      : "text-white/30 text-sm font-medium hover:text-white/60"
+                  }`}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </button>
+              ))}
+            </div>
+            {banners.length > 1 && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => goTo((current - 1 + banners.length) % banners.length)}
+                  className="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center text-white/60 hover:text-white hover:border-white/30 transition-all"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => goTo((current + 1) % banners.length)}
+                  className="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center text-white/60 hover:text-white hover:border-white/30 transition-all"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );
