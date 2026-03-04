@@ -8,6 +8,13 @@ import Footer from "./Footer";
 
 type SortType = "default" | "price_asc" | "price_desc" | "rating";
 
+const sortOptions: { value: SortType; label: string }[] = [
+  { value: "default", label: "추천순" },
+  { value: "price_asc", label: "낮은 가격순" },
+  { value: "price_desc", label: "높은 가격순" },
+  { value: "rating", label: "평점순" },
+];
+
 export default function CategoryPageClient({ category, products, categories }: { category: Category; products: Product[]; categories: Category[] }) {
   const [sort, setSort] = useState<SortType>("default");
   const [gender, setGender] = useState<"" | "남자" | "여자">("");
@@ -26,32 +33,34 @@ export default function CategoryPageClient({ category, products, categories }: {
   return (
     <main className="min-h-screen bg-white">
       <Header categories={categories} />
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-10 md:py-16">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-black">{category.name}</h1>
-            <p className="text-sm text-gray-400 mt-1">{filtered.length}개의 상품</p>
-          </div>
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value as SortType)}
-            className="px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 focus:outline-none focus:border-black bg-white"
-          >
-            <option value="default">기본 정렬</option>
-            <option value="price_asc">낮은 가격순</option>
-            <option value="price_desc">높은 가격순</option>
-            <option value="rating">평점순</option>
-          </select>
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-8 md:py-16">
+        {/* Title */}
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight text-black">{category.name}</h1>
+          <p className="text-sm text-gray-400 mt-1">{filtered.length}개의 상품</p>
         </div>
 
-        {/* Gender Filter */}
-        <div className="flex gap-2 mb-10">
-          {(["", "남자", "여자"] as const).map((g) => (
-            <button key={g} onClick={() => setGender(g)}
-              className={`px-4 py-2 text-sm rounded-full font-medium transition-all ${gender === g ? "bg-black text-white" : "bg-white text-gray-500 border border-gray-200 hover:border-gray-400"}`}>
-              {g || "전체"}
-            </button>
-          ))}
+        {/* Filter Bar */}
+        <div className="flex flex-col gap-3 mb-8 sm:flex-row sm:items-center sm:justify-between">
+          {/* Gender */}
+          <div className="flex gap-1.5">
+            {(["", "남자", "여자"] as const).map((g) => (
+              <button key={g} onClick={() => setGender(g)}
+                className={`px-4 py-2 text-[13px] rounded-full font-semibold transition-all ${gender === g ? "bg-black text-white shadow-sm" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
+                {g || "전체"}
+              </button>
+            ))}
+          </div>
+
+          {/* Sort */}
+          <div className="flex gap-1.5 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+            {sortOptions.map((s) => (
+              <button key={s.value} onClick={() => setSort(s.value)}
+                className={`px-3.5 py-2 text-[13px] rounded-full font-medium whitespace-nowrap transition-all shrink-0 ${sort === s.value ? "bg-black text-white shadow-sm" : "bg-white text-gray-500 border border-gray-200 hover:border-gray-400"}`}>
+                {s.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {filtered.length > 0 ? (
