@@ -7,6 +7,7 @@ export interface Product {
   badges: string[];
   rating: number;
   category: string;
+  gender: "남자" | "여자" | null;
   sort_order: number;
   is_active: boolean;
   description: string | null;

@@ -10,25 +10,27 @@ type SortType = "default" | "price_asc" | "price_desc" | "rating";
 
 export default function CategoryPageClient({ category, products, categories }: { category: Category; products: Product[]; categories: Category[] }) {
   const [sort, setSort] = useState<SortType>("default");
+  const [gender, setGender] = useState<"" | "남자" | "여자">("");
 
-  const sorted = useMemo(() => {
-    const copy = [...products];
+  const filtered = useMemo(() => {
+    let result = [...products];
+    if (gender) result = result.filter((p) => p.gender === gender);
     switch (sort) {
-      case "price_asc": return copy.sort((a, b) => a.sale_price - b.sale_price);
-      case "price_desc": return copy.sort((a, b) => b.sale_price - a.sale_price);
-      case "rating": return copy.sort((a, b) => b.rating - a.rating);
-      default: return copy;
+      case "price_asc": return result.sort((a, b) => a.sale_price - b.sale_price);
+      case "price_desc": return result.sort((a, b) => b.sale_price - a.sale_price);
+      case "rating": return result.sort((a, b) => b.rating - a.rating);
+      default: return result;
     }
-  }, [products, sort]);
+  }, [products, sort, gender]);
 
   return (
     <main className="min-h-screen bg-white">
       <Header categories={categories} />
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-10 md:py-16">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
           <div>
             <h1 className="text-2xl md:text-3xl font-black tracking-tight text-black">{category.name}</h1>
-            <p className="text-sm text-gray-400 mt-1">{products.length}개의 상품</p>
+            <p className="text-sm text-gray-400 mt-1">{filtered.length}개의 상품</p>
           </div>
           <select
             value={sort}
@@ -42,9 +44,19 @@ export default function CategoryPageClient({ category, products, categories }: {
           </select>
         </div>
 
-        {sorted.length > 0 ? (
+        {/* Gender Filter */}
+        <div className="flex gap-2 mb-10">
+          {(["", "남자", "여자"] as const).map((g) => (
+            <button key={g} onClick={() => setGender(g)}
+              className={`px-4 py-2 text-sm rounded-full font-medium transition-all ${gender === g ? "bg-black text-white" : "bg-white text-gray-500 border border-gray-200 hover:border-gray-400"}`}>
+              {g || "전체"}
+            </button>
+          ))}
+        </div>
+
+        {filtered.length > 0 ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-10">
-            {sorted.map((product) => (
+            {filtered.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

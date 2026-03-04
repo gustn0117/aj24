@@ -80,6 +80,7 @@ const emptyProduct = {
   badges: [] as string[],
   rating: 0,
   category: "",
+  gender: null as "남자" | "여자" | null,
   sort_order: 0,
   is_active: true,
   description: "",
@@ -117,7 +118,7 @@ export default function ProductsPage() {
   const openCreate = () => { setEditing(null); setForm(emptyProduct); setBadgeInput(""); setModalOpen(true); };
   const openEdit = (p: Product) => {
     setEditing(p);
-    setForm({ name: p.name, original_price: p.original_price, sale_price: p.sale_price, discount: null, image: p.image, badges: p.badges, rating: p.rating, category: p.category, sort_order: p.sort_order, is_active: p.is_active, description: p.description || "" });
+    setForm({ name: p.name, original_price: p.original_price, sale_price: p.sale_price, discount: null, image: p.image, badges: p.badges, rating: p.rating, category: p.category, gender: p.gender, sort_order: p.sort_order, is_active: p.is_active, description: p.description || "" });
     setBadgeInput(""); setModalOpen(true);
   };
   const handleSave = async () => {
@@ -165,6 +166,7 @@ export default function ProductsPage() {
               <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider w-12">이미지</th>
               <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">상품명</th>
               <th className="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">카테고리</th>
+              <th className="px-4 py-3 text-center text-[11px] font-semibold text-gray-500 uppercase tracking-wider">성별</th>
               <th className="px-4 py-3 text-right text-[11px] font-semibold text-gray-500 uppercase tracking-wider">판매가</th>
               <th className="px-4 py-3 text-center text-[11px] font-semibold text-gray-500 uppercase tracking-wider">상태</th>
               <th className="px-4 py-3 text-center text-[11px] font-semibold text-gray-500 uppercase tracking-wider">관리</th>
@@ -177,6 +179,7 @@ export default function ProductsPage() {
                 <td className="px-4 py-3.5">{p.image && p.image !== "/images/placeholder.svg" ? <img src={p.image} alt="" className="w-10 h-10 object-cover rounded" /> : <div className="w-10 h-10 bg-gray-100 rounded" />}</td>
                 <td className="px-4 py-3.5 font-medium text-gray-900 max-w-xs truncate">{p.name}</td>
                 <td className="px-4 py-3.5"><span className="px-2 py-0.5 rounded-full bg-gray-100 text-[11px] font-medium text-gray-600">{p.category || "-"}</span></td>
+                <td className="px-4 py-3.5 text-center"><span className="text-[11px] text-gray-500">{p.gender || "-"}</span></td>
                 <td className="px-4 py-3.5 text-right font-semibold text-gray-900">{p.sale_price.toLocaleString()}원</td>
                 <td className="px-4 py-3.5 text-center">
                   <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium ${p.is_active ? "text-emerald-600" : "text-gray-400"}`}>
@@ -215,6 +218,17 @@ export default function ProductsPage() {
                 <button key={c.id} type="button" onClick={() => setForm({ ...form, category: form.category === c.name ? "" : c.name })}
                   className={`px-3.5 py-2 text-xs rounded-lg font-medium transition-all ${form.category === c.name ? "bg-gray-900 text-white ring-2 ring-gray-900/20" : "bg-gray-50 text-gray-600 border border-gray-200 hover:border-gray-400"}`}>
                   {c.name}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className={labelCls}>성별</label>
+            <div className="flex gap-2">
+              {(["남자", "여자"] as const).map((g) => (
+                <button key={g} type="button" onClick={() => setForm({ ...form, gender: form.gender === g ? null : g })}
+                  className={`px-3.5 py-2 text-xs rounded-lg font-medium transition-all ${form.gender === g ? "bg-gray-900 text-white ring-2 ring-gray-900/20" : "bg-gray-50 text-gray-600 border border-gray-200 hover:border-gray-400"}`}>
+                  {g}
                 </button>
               ))}
             </div>
