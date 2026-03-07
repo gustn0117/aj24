@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Product, Review } from "@/lib/types";
+import { Product, Review, Category } from "@/lib/types";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -39,7 +39,7 @@ function StarSelector({ value, onChange }: { value: number; onChange: (v: number
   );
 }
 
-export default function ProductDetailClient({ product, relatedProducts, reviews: initialReviews }: { product: Product; relatedProducts: Product[]; reviews: Review[] }) {
+export default function ProductDetailClient({ product, relatedProducts, reviews: initialReviews, categories = [] }: { product: Product; relatedProducts: Product[]; reviews: Review[]; categories?: Category[] }) {
   const { addItem } = useCart();
   const { isWishlisted, toggleWishlist } = useWishlist();
   const { member, isLoading: authLoading } = useAuth();
@@ -87,7 +87,7 @@ export default function ProductDetailClient({ product, relatedProducts, reviews:
 
   return (
     <main className="min-h-screen bg-white">
-      <Header categories={[]} />
+      <Header categories={categories} />
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-8 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">

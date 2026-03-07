@@ -11,14 +11,24 @@ interface HeaderProps {
   categories: Category[];
 }
 
-export default function Header({ categories }: HeaderProps) {
+export default function Header({ categories: initialCategories }: HeaderProps) {
   const { member, isLoading, logout } = useAuth();
   const { getItemCount, setCartOpen } = useCart();
   const router = useRouter();
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    if (initialCategories.length === 0) {
+      fetch("/api/categories")
+        .then((r) => r.ok ? r.json() : [])
+        .then((data) => setCategories(data))
+        .catch(() => {});
+    }
+  }, [initialCategories]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);

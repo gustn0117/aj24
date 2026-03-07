@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { Product, Review } from "@/lib/types";
+import { Product, Review, Category } from "@/lib/types";
 import { notFound } from "next/navigation";
 import ProductDetailClient from "@/components/ProductDetailClient";
 
@@ -15,7 +15,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
 
   if (!product) notFound();
 
-  const [{ data: relatedProducts }, { data: reviews }] = await Promise.all([
+  const [{ data: relatedProducts }, { data: reviews }, { data: categories }] = await Promise.all([
     supabase
       .from("products")
       .select("*")
@@ -28,6 +28,11 @@ export default async function ProductPage({ params }: { params: { id: string } }
       .select("*")
       .eq("product_id", product.id)
       .order("created_at", { ascending: false }),
+    supabase
+      .from("categories")
+      .select("*")
+      .eq("is_active", true)
+      .order("sort_order"),
   ]);
 
   return (
@@ -35,6 +40,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
       product={product as Product}
       relatedProducts={(relatedProducts as Product[]) || []}
       reviews={(reviews as Review[]) || []}
+      categories={(categories as Category[]) || []}
     />
   );
 }
