@@ -9,12 +9,14 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export default function WishlistPage() {
-  const { wishlistIds } = useWishlist();
+  const { wishlistIds, isLoaded } = useWishlist();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!isLoaded) return;
     if (wishlistIds.length === 0) { setProducts([]); setLoading(false); return; }
+    setLoading(true);
     supabase
       .from("products")
       .select("*")
@@ -22,7 +24,7 @@ export default function WishlistPage() {
       .eq("is_active", true)
       .then(({ data }) => { setProducts((data as Product[]) || []); setLoading(false); })
       .then(undefined, () => setLoading(false));
-  }, [wishlistIds]);
+  }, [wishlistIds, isLoaded]);
 
   return (
     <main className="min-h-screen bg-white">

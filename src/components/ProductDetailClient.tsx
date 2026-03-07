@@ -42,7 +42,7 @@ function StarSelector({ value, onChange }: { value: number; onChange: (v: number
 export default function ProductDetailClient({ product, relatedProducts, reviews: initialReviews }: { product: Product; relatedProducts: Product[]; reviews: Review[] }) {
   const { addItem } = useCart();
   const { isWishlisted, toggleWishlist } = useWishlist();
-  const { member } = useAuth();
+  const { member, isLoading: authLoading } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const wishlisted = isWishlisted(product.id);
 
@@ -240,7 +240,9 @@ export default function ProductDetailClient({ product, relatedProducts, reviews:
                 )}
               </div>
 
-              {member ? (
+              {authLoading ? (
+                <div className="bg-[#fafafa] rounded-xl p-5 mb-8"><div className="h-20 bg-gray-100 rounded-lg animate-pulse" /></div>
+              ) : member ? (
                 <div className="bg-[#fafafa] rounded-xl p-5 sm:p-6 mb-8">
                   <p className="text-sm font-semibold mb-3">리뷰 작성</p>
                   <div className="mb-3">

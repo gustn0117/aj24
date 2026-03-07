@@ -5,12 +5,14 @@ import { useAuth } from "./AuthContext";
 
 interface WishlistContextType {
   wishlistIds: number[];
+  isLoaded: boolean;
   toggleWishlist: (productId: number) => void;
   isWishlisted: (productId: number) => boolean;
 }
 
 const WishlistContext = createContext<WishlistContextType>({
   wishlistIds: [],
+  isLoaded: false,
   toggleWishlist: () => {},
   isWishlisted: () => false,
 });
@@ -68,7 +70,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const isWishlisted = useCallback((productId: number) => wishlistIds.includes(productId), [wishlistIds]);
 
   return (
-    <WishlistContext.Provider value={{ wishlistIds, toggleWishlist, isWishlisted }}>
+    <WishlistContext.Provider value={{ wishlistIds, isLoaded: mounted, toggleWishlist, isWishlisted }}>
       {children}
     </WishlistContext.Provider>
   );

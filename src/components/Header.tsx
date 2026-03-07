@@ -12,7 +12,7 @@ interface HeaderProps {
 }
 
 export default function Header({ categories }: HeaderProps) {
-  const { member, logout } = useAuth();
+  const { member, isLoading, logout } = useAuth();
   const { getItemCount, setCartOpen } = useCart();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -110,7 +110,9 @@ export default function Header({ categories }: HeaderProps) {
                 <span className="absolute top-1 right-1 bg-black text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{itemCount > 99 ? "99" : itemCount}</span>
               )}
             </button>
-            {member ? (
+            {isLoading ? (
+              <div className="hidden sm:flex ml-2"><span className="w-[72px] h-[34px] bg-gray-100 rounded-full animate-pulse" /></div>
+            ) : member ? (
               <div className="hidden sm:flex items-center gap-2 ml-2">
                 <a href="/mypage" className="flex items-center gap-1.5 px-4 py-2 bg-black text-white rounded-full text-[11px] font-bold tracking-wide hover:bg-gray-800 transition-colors">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
@@ -187,7 +189,9 @@ export default function Header({ categories }: HeaderProps) {
               </a>
             </div>
             <div className="p-4 border-t border-gray-100">
-              {member ? (
+              {isLoading ? (
+                <div className="w-full h-[44px] bg-gray-100 rounded-lg animate-pulse" />
+              ) : member ? (
                 <div className="space-y-2">
                   <a href="/mypage" className="block w-full py-3 bg-black text-white rounded-lg text-sm font-bold text-center">{member.name}님</a>
                   <button onClick={logout} className="w-full py-3 border border-gray-200 rounded-lg text-sm font-bold text-gray-500">로그아웃</button>
