@@ -3,6 +3,23 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
+interface RecentOrder {
+  id: number;
+  status: string;
+  total_amount: number;
+  shipping_name: string;
+  created_at: string;
+}
+
+interface RecentReview {
+  id: number;
+  author_name: string;
+  rating: number;
+  content: string;
+  is_admin_created: boolean;
+  created_at: string;
+}
+
 interface Stats {
   products: number;
   banners: number;
@@ -11,6 +28,8 @@ interface Stats {
   members: number;
   pendingOrders: number;
   totalRevenue: number;
+  recentOrders: RecentOrder[];
+  recentReviews: RecentReview[];
 }
 
 const statCards = [
@@ -99,6 +118,73 @@ export default function AdminDashboard() {
               )}
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Recent Orders & Reviews */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Recent Orders */}
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
+            <h3 className="text-sm font-bold text-gray-900">최근 주문</h3>
+            <Link href="/admin/orders" className="text-[11px] text-gray-400 hover:text-gray-600 font-medium">전체보기</Link>
+          </div>
+          {stats?.recentOrders && stats.recentOrders.length > 0 ? (
+            <div className="divide-y divide-gray-50">
+              {stats.recentOrders.map((order) => (
+                <div key={order.id} className="px-5 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-xs text-gray-400 font-mono">#{order.id}</span>
+                    <span className="text-sm text-gray-700 font-medium truncate">{order.shipping_name || "고객"}</span>
+                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                      order.status === "pending" ? "bg-yellow-50 text-yellow-600" :
+                      order.status === "paid" ? "bg-blue-50 text-blue-600" :
+                      order.status === "shipped" ? "bg-green-50 text-green-600" :
+                      order.status === "delivered" ? "bg-gray-100 text-gray-600" :
+                      "bg-red-50 text-red-600"
+                    }`}>{order.status}</span>
+                  </div>
+                  <div className="text-right shrink-0 ml-3">
+                    <p className="text-sm font-bold text-gray-900">{order.total_amount.toLocaleString()}원</p>
+                    <p className="text-[10px] text-gray-400">{new Date(order.created_at).toLocaleDateString("ko-KR")}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="px-5 py-8 text-center text-sm text-gray-400">주문이 없습니다.</div>
+          )}
+        </div>
+
+        {/* Recent Reviews */}
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
+            <h3 className="text-sm font-bold text-gray-900">최근 리뷰</h3>
+            <Link href="/admin/reviews" className="text-[11px] text-gray-400 hover:text-gray-600 font-medium">전체보기</Link>
+          </div>
+          {stats?.recentReviews && stats.recentReviews.length > 0 ? (
+            <div className="divide-y divide-gray-50">
+              {stats.recentReviews.map((review) => (
+                <div key={review.id} className="px-5 py-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm font-medium text-gray-700">{review.author_name}</span>
+                    <div className="flex items-center gap-px">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <svg key={s} width="10" height="10" viewBox="0 0 24 24" fill={s <= review.rating ? "#000" : "none"} stroke={s <= review.rating ? "#000" : "#ddd"} strokeWidth="1.5">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                      ))}
+                    </div>
+                    {review.is_admin_created && <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 border border-amber-200">조작</span>}
+                    <span className="text-[10px] text-gray-400 ml-auto">{new Date(review.created_at).toLocaleDateString("ko-KR")}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 truncate">{review.content}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="px-5 py-8 text-center text-sm text-gray-400">리뷰가 없습니다.</div>
+          )}
         </div>
       </div>
     </div>

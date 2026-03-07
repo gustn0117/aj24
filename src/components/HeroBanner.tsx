@@ -71,15 +71,12 @@ export default function HeroBanner({ banners }: HeroBannerProps) {
                 {banners[current].subtitle}
               </p>
               <div className="flex items-center gap-3">
-                <button className="group px-8 py-4 bg-white text-black font-bold rounded-full hover:bg-white/90 transition-all active:scale-95 text-sm tracking-wide inline-flex items-center gap-2">
+                <a href={banners[current].link_url || "/"} className="group px-8 py-4 bg-white text-black font-bold rounded-full hover:bg-white/90 transition-all active:scale-95 text-sm tracking-wide inline-flex items-center gap-2">
                   SHOP NOW
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="group-hover:translate-x-1 transition-transform">
                     <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
                   </svg>
-                </button>
-                <button className="px-8 py-4 border border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition-all text-sm tracking-wide backdrop-blur-sm">
-                  VIEW MORE
-                </button>
+                </a>
               </div>
             </div>
 

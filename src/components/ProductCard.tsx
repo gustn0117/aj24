@@ -131,7 +131,7 @@ export default function ProductCard({ product }: { product: Product }) {
               </svg>
             ))}
           </div>
-          <span className="text-[11px] text-gray-400">({Math.floor(product.rating * 47)})</span>
+          <span className="text-[11px] text-gray-400">{product.rating.toFixed(1)}</span>
         </div>
       </div>
     </Link>

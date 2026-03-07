@@ -19,9 +19,9 @@ export default function Footer() {
 
       {/* Main footer */}
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-12 md:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
-          <div className="col-span-2 md:col-span-2">
+          <div className="col-span-2">
             <div className="flex items-center gap-2 mb-5">
               <img src="/images/logo.png" alt="AJ24" className="h-7 w-auto brightness-0 invert" />
               <span className="text-white font-black text-lg tracking-tight">AJ24</span>
@@ -53,28 +53,16 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-bold mb-5 text-xs uppercase tracking-widest">고객센터</h4>
             <ul className="space-y-3 text-sm">
-              <li><a href="#" className="hover:text-white transition-colors">자주 묻는 질문</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">1:1 문의</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">배송 안내</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">반품/교환</a></li>
+              <li><a href="/mypage" className="hover:text-white transition-colors">마이페이지</a></li>
+              <li><a href="/mypage/orders" className="hover:text-white transition-colors">주문 조회</a></li>
+              <li><a href="/mypage/wishlist" className="hover:text-white transition-colors">위시리스트</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-white font-bold mb-5 text-xs uppercase tracking-widest">회사 정보</h4>
+            <h4 className="text-white font-bold mb-5 text-xs uppercase tracking-widest">이용 안내</h4>
             <ul className="space-y-3 text-sm">
-              <li><a href="#" className="hover:text-white transition-colors">회사 소개</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">이용약관</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">개인정보처리방침</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">제휴/입점 문의</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-white font-bold mb-5 text-xs uppercase tracking-widest">연락처</h4>
-            <ul className="space-y-3 text-sm">
-              <li className="text-white font-semibold text-base">1588-0000</li>
-              <li>help@aj24.co.kr</li>
-              <li>평일 09:00 - 18:00</li>
-              <li className="text-gray-600 text-xs mt-1">주말/공휴일 휴무</li>
+              <li><a href="/terms" className="hover:text-white transition-colors">이용약관</a></li>
+              <li><a href="/privacy" className="hover:text-white transition-colors">개인정보처리방침</a></li>
             </ul>
           </div>
         </div>

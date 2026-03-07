@@ -149,9 +149,9 @@ export default function Header({ categories }: HeaderProps) {
                 </button>
               </div>
               <div className="mt-6 flex flex-wrap gap-2">
-                {["트렌치코트", "데님", "스니커즈", "가방", "원피스"].map((keyword) => (
-                  <button key={keyword} onClick={() => handleSearch(keyword)} className="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-xs font-medium hover:bg-gray-200 cursor-pointer transition-colors">
-                    {keyword}
+                {categories.slice(0, 6).map((cat) => (
+                  <button key={cat.id} onClick={() => handleSearch(cat.name)} className="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-xs font-medium hover:bg-gray-200 cursor-pointer transition-colors">
+                    {cat.name}
                   </button>
                 ))}
               </div>

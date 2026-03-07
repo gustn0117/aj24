@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const [products, banners, categories, orders, members, pendingOrders, revenue] =
+  const [products, banners, categories, orders, members, pendingOrders, revenue, recentOrders, recentReviews] =
     await Promise.all([
       supabaseAdmin.from("products").select("*", { count: "exact", head: true }),
       supabaseAdmin.from("banners").select("*", { count: "exact", head: true }).eq("is_active", true),
@@ -16,6 +16,8 @@ export async function GET(request: NextRequest) {
       supabaseAdmin.from("members").select("*", { count: "exact", head: true }),
       supabaseAdmin.from("orders").select("*", { count: "exact", head: true }).eq("status", "pending"),
       supabaseAdmin.from("orders").select("total_amount"),
+      supabaseAdmin.from("orders").select("id,status,total_amount,shipping_name,created_at").order("created_at", { ascending: false }).limit(5),
+      supabaseAdmin.from("reviews").select("id,author_name,rating,content,is_admin_created,created_at").order("created_at", { ascending: false }).limit(5),
     ]);
 
   const totalRevenue = (revenue.data || []).reduce((sum, o) => sum + o.total_amount, 0);
@@ -28,5 +30,7 @@ export async function GET(request: NextRequest) {
     members: members.count || 0,
     pendingOrders: pendingOrders.count || 0,
     totalRevenue,
+    recentOrders: recentOrders.data || [],
+    recentReviews: recentReviews.data || [],
   });
 }
