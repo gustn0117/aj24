@@ -46,10 +46,12 @@ export default function ProductDetailClient({ product, relatedProducts, reviews:
   const [quantity, setQuantity] = useState(1);
   const wishlisted = isWishlisted(product.id);
 
+  const [activeTab, setActiveTab] = useState<"detail" | "review">("detail");
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
   const [reviewForm, setReviewForm] = useState({ rating: 5, content: "" });
   const [submitting, setSubmitting] = useState(false);
   const [reviewError, setReviewError] = useState("");
+  const [detailExpanded, setDetailExpanded] = useState(false);
 
   const discountPercent = product.original_price > product.sale_price
     ? Math.round((1 - product.sale_price / product.original_price) * 100)
@@ -168,71 +170,128 @@ export default function ProductDetailClient({ product, relatedProducts, reviews:
           </div>
         </div>
 
-        {/* Reviews Section */}
+        {/* Tabs */}
         <div className="mt-20">
-          <div className="flex items-center gap-3 mb-8">
-            <h2 className="text-xl font-black tracking-tight">리뷰</h2>
-            <span className="text-sm text-gray-400">({reviews.length})</span>
-            {reviews.length > 0 && (
-              <div className="flex items-center gap-1.5 ml-2">
-                <StarRating rating={avgRating} size={14} />
-                <span className="text-sm font-semibold">{avgRating.toFixed(1)}</span>
-              </div>
-            )}
+          <div className="flex border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab("detail")}
+              className={`px-6 py-4 text-sm font-bold transition-colors relative ${activeTab === "detail" ? "text-black" : "text-gray-400 hover:text-gray-600"}`}
+            >
+              상세정보
+              {activeTab === "detail" && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-black" />}
+            </button>
+            <button
+              onClick={() => setActiveTab("review")}
+              className={`px-6 py-4 text-sm font-bold transition-colors relative ${activeTab === "review" ? "text-black" : "text-gray-400 hover:text-gray-600"}`}
+            >
+              리뷰 ({reviews.length})
+              {activeTab === "review" && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-black" />}
+            </button>
           </div>
 
-          {/* Review Write Form */}
-          {member ? (
-            <div className="bg-[#fafafa] rounded-xl p-5 sm:p-6 mb-8">
-              <p className="text-sm font-semibold mb-3">리뷰 작성</p>
-              <div className="mb-3">
-                <StarSelector value={reviewForm.rating} onChange={(v) => setReviewForm({ ...reviewForm, rating: v })} />
-              </div>
-              <textarea
-                value={reviewForm.content}
-                onChange={(e) => setReviewForm({ ...reviewForm, content: e.target.value })}
-                placeholder="상품에 대한 솔직한 리뷰를 작성해주세요."
-                rows={3}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-black resize-none bg-white"
-              />
-              {reviewError && <p className="text-xs text-red-500 mt-1">{reviewError}</p>}
-              <button
-                onClick={handleSubmitReview}
-                disabled={submitting}
-                className="mt-3 px-6 py-2.5 bg-black text-white text-sm font-bold rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
-              >
-                {submitting ? "등록 중..." : "리뷰 등록"}
-              </button>
-            </div>
-          ) : (
-            <div className="bg-[#fafafa] rounded-xl p-5 mb-8 text-center">
-              <p className="text-sm text-gray-500">로그인 후 리뷰를 작성할 수 있습니다.</p>
+          {/* Detail Tab */}
+          {activeTab === "detail" && (
+            <div className="pt-8">
+              {product.detail_images && product.detail_images.length > 0 ? (
+                <div className="relative">
+                  <div className={`overflow-hidden transition-all duration-500 ${!detailExpanded ? "max-h-[800px]" : ""}`}>
+                    <div className="flex flex-col items-center gap-0">
+                      {product.detail_images.map((img, idx) => (
+                        <img key={idx} src={img} alt={`${product.name} 상세 ${idx + 1}`} className="w-full max-w-[800px]" loading="lazy" />
+                      ))}
+                    </div>
+                  </div>
+                  {!detailExpanded && product.detail_images.length > 0 && (
+                    <div className="relative -mt-20">
+                      <div className="h-20 bg-gradient-to-t from-white to-transparent" />
+                      <div className="text-center pb-4">
+                        <button
+                          onClick={() => setDetailExpanded(true)}
+                          className="inline-flex items-center gap-2 px-8 py-3 border border-gray-300 rounded-full text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          상세정보 더보기
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-16">
+                  <p className="text-sm text-gray-400">등록된 상세정보가 없습니다.</p>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Review List */}
-          {reviews.length > 0 ? (
-            <div className="space-y-0 divide-y divide-gray-100">
-              {reviews.map((review) => (
-                <div key={review.id} className="py-5 first:pt-0">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">
-                      {review.author_name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900">{review.author_name}</p>
-                      <div className="flex items-center gap-2">
-                        <StarRating rating={review.rating} size={12} />
-                        <span className="text-[11px] text-gray-400">{new Date(review.created_at).toLocaleDateString("ko-KR")}</span>
-                      </div>
-                    </div>
+          {/* Review Tab */}
+          {activeTab === "review" && (
+            <div className="pt-8">
+              <div className="flex items-center gap-3 mb-8">
+                <h2 className="text-xl font-black tracking-tight">리뷰</h2>
+                <span className="text-sm text-gray-400">({reviews.length})</span>
+                {reviews.length > 0 && (
+                  <div className="flex items-center gap-1.5 ml-2">
+                    <StarRating rating={avgRating} size={14} />
+                    <span className="text-sm font-semibold">{avgRating.toFixed(1)}</span>
                   </div>
-                  <p className="text-sm text-gray-600 leading-relaxed ml-11">{review.content}</p>
+                )}
+              </div>
+
+              {member ? (
+                <div className="bg-[#fafafa] rounded-xl p-5 sm:p-6 mb-8">
+                  <p className="text-sm font-semibold mb-3">리뷰 작성</p>
+                  <div className="mb-3">
+                    <StarSelector value={reviewForm.rating} onChange={(v) => setReviewForm({ ...reviewForm, rating: v })} />
+                  </div>
+                  <textarea
+                    value={reviewForm.content}
+                    onChange={(e) => setReviewForm({ ...reviewForm, content: e.target.value })}
+                    placeholder="상품에 대한 솔직한 리뷰를 작성해주세요."
+                    rows={3}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-black resize-none bg-white"
+                  />
+                  {reviewError && <p className="text-xs text-red-500 mt-1">{reviewError}</p>}
+                  <button
+                    onClick={handleSubmitReview}
+                    disabled={submitting}
+                    className="mt-3 px-6 py-2.5 bg-black text-white text-sm font-bold rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
+                  >
+                    {submitting ? "등록 중..." : "리뷰 등록"}
+                  </button>
                 </div>
-              ))}
+              ) : (
+                <div className="bg-[#fafafa] rounded-xl p-5 mb-8 text-center">
+                  <p className="text-sm text-gray-500">로그인 후 리뷰를 작성할 수 있습니다.</p>
+                </div>
+              )}
+
+              {reviews.length > 0 ? (
+                <div className="space-y-0 divide-y divide-gray-100">
+                  {reviews.map((review) => (
+                    <div key={review.id} className="py-5 first:pt-0">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">
+                          {review.author_name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900">{review.author_name}</p>
+                          <div className="flex items-center gap-2">
+                            <StarRating rating={review.rating} size={12} />
+                            <span className="text-[11px] text-gray-400">{new Date(review.created_at).toLocaleDateString("ko-KR")}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600 leading-relaxed ml-11">{review.content}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-400 text-center py-8">아직 리뷰가 없습니다.</p>
+              )}
             </div>
-          ) : (
-            <p className="text-sm text-gray-400 text-center py-8">아직 리뷰가 없습니다.</p>
           )}
         </div>
 

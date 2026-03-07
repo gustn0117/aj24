@@ -11,6 +11,7 @@ export interface Product {
   sort_order: number;
   is_active: boolean;
   description: string | null;
+  detail_images: string[];
   created_at: string;
   updated_at: string;
 }

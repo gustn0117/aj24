@@ -71,6 +71,76 @@ function ImageUploader({ value, onChange }: { value: string; onChange: (url: str
   );
 }
 
+function DetailImageUploader({ images, onChange }: { images: string[]; onChange: (imgs: string[]) => void }) {
+  const [uploading, setUploading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function uploadFiles(files: FileList) {
+    setUploading(true);
+    const newImages = [...images];
+    for (let i = 0; i < files.length; i++) {
+      const fd = new FormData();
+      fd.append("file", files[i]);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (res.ok && data.url) newImages.push(data.url);
+    }
+    onChange(newImages);
+    setUploading(false);
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    if (e.dataTransfer.files.length > 0) uploadFiles(e.dataTransfer.files);
+  }
+
+  function removeImage(idx: number) {
+    onChange(images.filter((_, i) => i !== idx));
+  }
+
+  function moveImage(idx: number, dir: -1 | 1) {
+    if (idx + dir < 0 || idx + dir >= images.length) return;
+    const arr = [...images];
+    [arr[idx], arr[idx + dir]] = [arr[idx + dir], arr[idx]];
+    onChange(arr);
+  }
+
+  return (
+    <div>
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-2">
+        {images.map((img, idx) => (
+          <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 group">
+            <img src={img} alt="" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100">
+              {idx > 0 && <button onClick={() => moveImage(idx, -1)} className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-xs shadow">&#8593;</button>}
+              {idx < images.length - 1 && <button onClick={() => moveImage(idx, 1)} className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-xs shadow">&#8595;</button>}
+              <button onClick={() => removeImage(idx)} className="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs shadow">&times;</button>
+            </div>
+            <span className="absolute top-1 left-1 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded font-bold">{idx + 1}</span>
+          </div>
+        ))}
+        <div
+          onClick={() => inputRef.current?.click()}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleDrop}
+          className="aspect-square border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors"
+        >
+          {uploading ? (
+            <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+          ) : (
+            <>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+              <p className="text-[10px] text-gray-400 mt-1">추가</p>
+            </>
+          )}
+        </div>
+      </div>
+      <input ref={inputRef} type="file" accept="image/*" multiple onChange={(e) => e.target.files && uploadFiles(e.target.files)} className="hidden" />
+      <p className="text-[10px] text-gray-400">여러 장 선택 가능. 드래그로 순서 변경.</p>
+    </div>
+  );
+}
+
 const emptyProduct = {
   name: "",
   original_price: 0,
@@ -84,6 +154,7 @@ const emptyProduct = {
   sort_order: 0,
   is_active: true,
   description: "",
+  detail_images: [] as string[],
 };
 
 export default function ProductsPage() {
@@ -118,7 +189,7 @@ export default function ProductsPage() {
   const openCreate = () => { setEditing(null); setForm(emptyProduct); setBadgeInput(""); setModalOpen(true); };
   const openEdit = (p: Product) => {
     setEditing(p);
-    setForm({ name: p.name, original_price: p.original_price, sale_price: p.sale_price, discount: null, image: p.image, badges: p.badges, rating: p.rating, category: p.category, gender: p.gender, sort_order: p.sort_order, is_active: p.is_active, description: p.description || "" });
+    setForm({ name: p.name, original_price: p.original_price, sale_price: p.sale_price, discount: null, image: p.image, badges: p.badges, rating: p.rating, category: p.category, gender: p.gender, sort_order: p.sort_order, is_active: p.is_active, description: p.description || "", detail_images: p.detail_images || [] });
     setBadgeInput(""); setModalOpen(true);
   };
   const handleSave = async () => {
@@ -257,6 +328,10 @@ export default function ProductsPage() {
               <input value={badgeInput} onChange={(e) => setBadgeInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addBadge())} placeholder="뱃지 입력 후 Enter" className={`flex-1 ${inputCls}`} />
               <button onClick={addBadge} className="px-3 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium transition-colors">추가</button>
             </div>
+          </div>
+          <div>
+            <label className={labelCls}>상세 이미지</label>
+            <DetailImageUploader images={form.detail_images} onChange={(imgs) => setForm({ ...form, detail_images: imgs })} />
           </div>
           <div><label className={labelCls}>설명</label><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className={`${inputCls} resize-none`} /></div>
           <label className="flex items-center gap-2.5 cursor-pointer">
