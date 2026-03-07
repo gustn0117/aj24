@@ -85,7 +85,20 @@ export default function Header({ categories }: HeaderProps) {
           </nav>
 
           <div className="flex items-center gap-0.5 shrink-0">
-            <button onClick={() => setSearchOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full transition-colors">
+            {/* Desktop inline search */}
+            <div className="hidden sm:flex items-center relative mr-1">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" className="absolute left-3 pointer-events-none"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                placeholder="검색..."
+                className="w-[160px] lg:w-[200px] pl-9 pr-3 py-2 bg-gray-100 rounded-full text-[13px] font-medium text-black placeholder:text-gray-400 outline-none focus:bg-gray-50 focus:ring-1 focus:ring-gray-300 transition-all"
+              />
+            </div>
+            {/* Mobile search button */}
+            <button onClick={() => setSearchOpen(true)} className="sm:hidden p-2.5 hover:bg-gray-100 rounded-full transition-colors">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
             </button>
             <a href="/mypage/wishlist" className="p-2.5 hover:bg-gray-100 rounded-full transition-colors hidden sm:flex">
@@ -114,9 +127,9 @@ export default function Header({ categories }: HeaderProps) {
         </div>
       </header>
 
-      {/* Search Overlay */}
+      {/* Search Overlay (mobile) */}
       {searchOpen && (
-        <div className="fixed inset-0 z-[60] animate-fade-in">
+        <div className="fixed inset-0 z-[60] sm:hidden animate-fade-in">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSearchOpen(false)} />
           <div className="relative bg-white animate-slide-down">
             <div className="max-w-[800px] mx-auto px-4 py-8">
