@@ -20,25 +20,29 @@ const WishlistContext = createContext<WishlistContextType>({
 const STORAGE_KEY = "aj24_wishlist";
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
-  const { member } = useAuth();
+  const { member, isLoading: authLoading } = useAuth();
   const [wishlistIds, setWishlistIds] = useState<number[]>([]);
   const [mounted, setMounted] = useState(false);
 
-  // Load wishlist
+  // Load wishlist - wait for auth to finish first
   useEffect(() => {
+    if (authLoading) return;
     if (member) {
       fetch("/api/member/wishlist")
         .then((r) => (r.ok ? r.json() : []))
-        .then((data: { product_id: number }[]) => setWishlistIds(data.map((w) => w.product_id)))
-        .catch(() => {});
+        .then((data: { product_id: number }[]) => {
+          setWishlistIds(data.map((w) => w.product_id));
+          setMounted(true);
+        })
+        .catch(() => setMounted(true));
     } else {
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) setWishlistIds(JSON.parse(saved));
       } catch {}
+      setMounted(true);
     }
-    setMounted(true);
-  }, [member]);
+  }, [member, authLoading]);
 
   // Save to localStorage if not logged in
   useEffect(() => {
