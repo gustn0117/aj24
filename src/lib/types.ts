@@ -106,6 +106,19 @@ export interface Wishlist {
   created_at: string;
 }
 
+export interface Product1688 {
+  id: string;
+  title: string;
+  titleOriginal: string;
+  priceCNY: number;
+  priceKRW: number;
+  imageUrl: string;
+  productUrl: string;
+  supplierName: string;
+  minOrder: number | null;
+  salesCount: string | null;
+}
+
 export interface CartItem {
   productId: number;
   name: string;
