@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import HeroBanner from "@/components/HeroBanner";
 import ProductSection from "@/components/ProductSection";
+import FloatingSidebar from "@/components/FloatingSidebar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
 import { Product, Banner, Category } from "@/lib/types";
@@ -35,16 +36,16 @@ export default async function Home() {
       <HeroBanner banners={(banners as Banner[]) || []} />
 
       <ProductSection
-        title="NEW ARRIVALS"
-        subtitle="새로 입고된 상품"
+        title="신상품"
+        subtitle="새로 입고된 최신 상품을 만나보세요"
         products={(allProducts as Product[]) || []}
       />
 
       <ProductSection
-        title="BEST"
+        title="베스트"
         subtitle="가장 인기 있는 상품"
         products={(bestProducts as Product[]) || []}
-        bgColor="bg-[#fafafa]"
+        bgColor="bg-[#f7f8fa]"
       />
 
       {activeCategories.map((cat, i) => (
@@ -52,11 +53,12 @@ export default async function Home() {
           key={cat.id}
           title={cat.name}
           products={(categoryProducts[i]?.data as Product[]) || []}
-          bgColor={i % 2 === 0 ? "bg-white" : "bg-[#fafafa]"}
+          bgColor={i % 2 === 0 ? "bg-white" : "bg-[#f7f8fa]"}
           linkHref={`/category/${cat.slug || cat.id}`}
         />
       ))}
 
+      <FloatingSidebar />
       <Footer />
     </main>
   );

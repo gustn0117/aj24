@@ -32,114 +32,75 @@ export default function HeroBanner({ banners }: HeroBannerProps) {
 
   if (banners.length === 0) return null;
 
-  return (
-    <section className="relative overflow-hidden bg-black">
-      {/* Background gradient */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${banners[current].bg_gradient} transition-all duration-1000`} />
+  const banner = banners[current];
 
-      {/* Banner image */}
-      {banners[current].image_url && (
-        <img src={banners[current].image_url!} alt="" className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${isTransitioning ? "opacity-0" : "opacity-100"}`} />
+  return (
+    <section className="relative overflow-hidden bg-gray-100">
+      {/* Background image */}
+      {banner.image_url ? (
+        <img
+          src={banner.image_url}
+          alt=""
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${isTransitioning ? "opacity-0 scale-105" : "opacity-100 scale-100"}`}
+        />
+      ) : (
+        <div className={`absolute inset-0 bg-gradient-to-br ${banner.bg_gradient} transition-all duration-700`} />
       )}
 
-      {/* Noise overlay */}
-      <div className="absolute inset-0 noise-bg" />
+      {/* Gradient overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
 
-      {/* Decorative grid */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-[20%] w-px h-full bg-white/[0.04]" />
-        <div className="absolute top-0 left-[40%] w-px h-full bg-white/[0.04]" />
-        <div className="absolute top-0 left-[60%] w-px h-full bg-white/[0.04]" />
-        <div className="absolute top-0 left-[80%] w-px h-full bg-white/[0.04]" />
-        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-white/[0.03] rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] bg-black/10 rounded-full blur-3xl" />
-      </div>
-
-      <div className="relative z-10 min-h-[480px] md:min-h-[580px] lg:min-h-[640px] flex items-center">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 w-full py-16 md:py-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            {/* Left content */}
-            <div className={`transition-all duration-500 ${isTransitioning ? "opacity-0 translate-y-6" : "opacity-100 translate-y-0"}`}>
-              <div className="inline-flex items-center gap-2 px-3 py-1 border border-white/15 rounded-full text-[11px] font-medium text-white/70 mb-6 backdrop-blur-sm">
-                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                AJ24 Collection
-              </div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.02] mb-6">
-                {banners[current].title}
-              </h1>
-              <p className="text-base sm:text-lg text-white/50 leading-relaxed mb-10 max-w-md">
-                {banners[current].subtitle}
+      {/* Content */}
+      <div className="relative z-10 min-h-[320px] sm:min-h-[400px] lg:min-h-[480px] flex items-center">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 w-full py-12 sm:py-16 lg:py-20">
+          <div className={`max-w-xl transition-all duration-500 ${isTransitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"}`}>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight mb-3 sm:mb-4 drop-shadow-lg">
+              {banner.title}
+            </h2>
+            {banner.subtitle && (
+              <p className="text-sm sm:text-base text-white/80 leading-relaxed mb-6 sm:mb-8 max-w-md drop-shadow">
+                {banner.subtitle}
               </p>
-              <div className="flex items-center gap-3">
-                <a href={banners[current].link_url || "/"} className="group px-8 py-4 bg-white text-black font-bold rounded-full hover:bg-white/90 transition-all active:scale-95 text-sm tracking-wide inline-flex items-center gap-2">
-                  SHOP NOW
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="group-hover:translate-x-1 transition-transform">
-                    <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-
-            {/* Right: Slide counter (desktop) */}
-            <div className="hidden lg:flex flex-col items-end justify-end h-full">
-              <div className="text-right">
-                <span className="text-8xl font-black text-white/10 leading-none block">
-                  {String(current + 1).padStart(2, "0")}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom bar */}
-      <div className="absolute bottom-0 left-0 right-0 z-20">
-        {/* Progress bar */}
-        <div className="h-0.5 bg-white/10">
-          <div key={progressKey} className="h-full bg-white/60 banner-progress" />
-        </div>
-
-        {/* Navigation */}
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-3">
-              {banners.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => goTo(i)}
-                  className={`transition-all duration-500 ${
-                    i === current
-                      ? "text-white text-sm font-bold"
-                      : "text-white/30 text-sm font-medium hover:text-white/60"
-                  }`}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </button>
-              ))}
-            </div>
-            {banners.length > 1 && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => goTo((current - 1 + banners.length) % banners.length)}
-                  className="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center text-white/60 hover:text-white hover:border-white/30 transition-all"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="15 18 9 12 15 6" />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => goTo((current + 1) % banners.length)}
-                  className="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center text-white/60 hover:text-white hover:border-white/30 transition-all"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </button>
-              </div>
+            )}
+            {banner.link_url && (
+              <a
+                href={banner.link_url}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-900 font-bold rounded-lg text-sm hover:bg-gray-100 transition-all active:scale-95 shadow-lg"
+              >
+                자세히 보기
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+                </svg>
+              </a>
             )}
           </div>
         </div>
       </div>
+
+      {/* Bottom progress & dots */}
+      {banners.length > 1 && (
+        <div className="absolute bottom-0 left-0 right-0 z-20">
+          {/* Progress bars */}
+          <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
+            <div className="flex gap-2 pb-6">
+              {banners.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  className="relative flex-1 h-1 rounded-full overflow-hidden bg-white/30 cursor-pointer max-w-[120px]"
+                >
+                  {i === current && (
+                    <div key={progressKey} className="absolute inset-0 bg-white rounded-full banner-progress" />
+                  )}
+                  {i < current && (
+                    <div className="absolute inset-0 bg-white rounded-full" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
