@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Product1688 } from "@/lib/types";
 
 function formatPrice(price: number) {
@@ -7,12 +8,17 @@ function formatPrice(price: number) {
 }
 
 export default function Product1688Card({ product }: { product: Product1688 }) {
+  const handleClick = () => {
+    try {
+      sessionStorage.setItem(`1688_product_${product.id}`, JSON.stringify(product));
+    } catch {}
+  };
+
   return (
-    <a
-      href={product.productUrl}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href={`/1688/${product.id}`}
       className="group cursor-pointer block"
+      onClick={handleClick}
     >
       {/* Image */}
       <div className="relative aspect-square bg-[#f5f5f5] rounded-lg overflow-hidden mb-3">
@@ -71,6 +77,6 @@ export default function Product1688Card({ product }: { product: Product1688 }) {
           </p>
         )}
       </div>
-    </a>
+    </Link>
   );
 }
