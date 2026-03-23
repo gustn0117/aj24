@@ -21,6 +21,7 @@ interface ApiData {
   source?: string;
   title?: string;
   images?: string[];
+  descriptionImages?: string[];
   skuOptions?: { name: string; values: { name: string; imageUrl?: string }[] }[];
   priceRange?: { price: string; startQuantity: number }[];
   minOrder?: number | null;
@@ -264,6 +265,42 @@ export default function Product1688Page() {
             </div>
           </div>
         </div>
+
+        {/* ── Description Images ── */}
+        {apiData?.descriptionImages && apiData.descriptionImages.length > 0 ? (
+          <div className="mt-12 md:mt-20">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-px flex-1 bg-gray-100" />
+              <h2 className="text-sm font-bold text-gray-400 tracking-widest uppercase">상품 상세</h2>
+              <div className="h-px flex-1 bg-gray-100" />
+            </div>
+            <div className="max-w-[790px] mx-auto">
+              {apiData.descriptionImages.map((img, i) => (
+                <img
+                  key={i}
+                  src={proxyImage(img)}
+                  alt={`상품 상세 ${i + 1}`}
+                  className="w-full h-auto"
+                  loading="lazy"
+                />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="mt-12 md:mt-20">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-px flex-1 bg-gray-100" />
+              <h2 className="text-sm font-bold text-gray-400 tracking-widest uppercase">상품 상세</h2>
+              <div className="h-px flex-1 bg-gray-100" />
+            </div>
+            <div className="text-center py-8">
+              <a href={productUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 bg-orange-500 text-white font-bold text-sm rounded-xl hover:bg-orange-600 transition-colors">
+                1688에서 상세 보기
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
+              </a>
+            </div>
+          </div>
+        )}
       </div>
 
       <Footer />
